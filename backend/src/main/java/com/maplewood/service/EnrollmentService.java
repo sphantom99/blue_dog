@@ -63,14 +63,14 @@ public class EnrollmentService {
         Semester activeSemester = activeSemesterOpt.get();
         Course course = section.getCourse();
 
-        // 3. Course grade level matches student grade
-        if (student.getGradeLevel() < course.getGradeLevelMin()
-                || student.getGradeLevel() > course.getGradeLevelMax()) {
+        // 3. Course grade level: student must be at or above the minimum grade.
+        //    No upper-bound check — older students may retake lower-grade courses.
+        if (student.getGradeLevel() < course.getGradeLevelMin()) {
             errors.add(new ValidationErrorDTO(
                     EnrollmentErrorCode.GRADE_MISMATCH.name(),
-                    "Course " + course.getCode() + " is for grades "
-                            + course.getGradeLevelMin() + "-" + course.getGradeLevelMax()
-                            + ", student is grade " + student.getGradeLevel()));
+                    "Course " + course.getCode() + " requires grade "
+                            + course.getGradeLevelMin()
+                            + " or above, student is grade " + student.getGradeLevel()));
         }
 
         // 4. Max 5 courses (only count enrolled, not dropped)
@@ -222,6 +222,9 @@ public class EnrollmentService {
                 section.getCourse().getId(),
                 section.getCourse().getCode(),
                 section.getCourse().getName(),
+                section.getCourse().getSpecialization() != null
+                        ? section.getCourse().getSpecialization().getName()
+                        : null,
                 section.getTeacher().getFirstName(),
                 section.getTeacher().getLastName(),
                 section.getSectionLabel(),

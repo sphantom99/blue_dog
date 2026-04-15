@@ -1,25 +1,29 @@
+import { DAY_NAMES } from "../lib/dayNames";
 import { useCourseStore } from "../store/useCourseStore";
 import type { CourseSection } from "../types";
 
-const DAY_NAMES = ["", "Mon", "Tue", "Wed", "Thu", "Fri"];
 
 interface SectionCardProps {
 	section: CourseSection;
-	studentId: number;
-	disabled: boolean;
+	courseAlreadyEnrolled: boolean;
 }
 
 export default function SectionCard({
 	section,
-	studentId,
-	disabled,
+	courseAlreadyEnrolled,
 }: SectionCardProps) {
-	const { enroll, enrolling } = useCourseStore();
+	const { pendingEnrollments, addToPending, removeFromPending } =
+		useCourseStore();
 
 	const isFull = section.enrolledCount >= section.capacity;
+	const isPending = pendingEnrollments.some((s) => s.id === section.id);
 
-	const handleAdd = async () => {
-		await enroll(studentId, section.id);
+	const handleToggle = () => {
+		if (isPending) {
+			removeFromPending(section.id);
+		} else {
+			addToPending(section);
+		}
 	};
 
 	const meetingText = section.meetings
@@ -30,16 +34,37 @@ export default function SectionCard({
 		})
 		.join(", ");
 
-	const buttonLabel = isFull
-		? "Full"
-		: disabled
-			? "Max"
-			: enrolling
-				? "..."
-				: "Add";
+	let buttonLabel: string;
+	let buttonStyle: string;
+	let buttonDisabled = false;
+
+	if (courseAlreadyEnrolled) {
+		buttonLabel = "Enrolled";
+		buttonStyle =
+			"bg-green-100 text-green-700 border border-green-300 cursor-not-allowed";
+		buttonDisabled = true;
+	} else if (isFull && !isPending) {
+		buttonLabel = "Full";
+		buttonStyle =
+			"bg-gray-100 text-gray-400 border border-gray-200 cursor-not-allowed";
+		buttonDisabled = true;
+	} else if (isPending) {
+		buttonLabel = "Pending ✕";
+		buttonStyle =
+			"bg-blue-100 text-blue-700 hover:bg-blue-200 border border-blue-300";
+	} else {
+		buttonLabel = "Add";
+		buttonStyle = "bg-indigo-600 text-white hover:bg-indigo-700";
+	}
 
 	return (
-		<div className="bg-white rounded-lg border border-gray-200 p-3 flex items-center justify-between gap-3">
+		<div
+			className={`bg-white rounded-lg border p-3 flex items-center justify-between gap-3 ${
+				isFull || courseAlreadyEnrolled
+					? "border-gray-100 opacity-70"
+					: "border-gray-200"
+			}`}
+		>
 			<div className="min-w-0 flex-1">
 				<div className="flex items-center gap-2">
 					<span className="text-sm font-medium text-gray-900">
@@ -58,10 +83,9 @@ export default function SectionCard({
 			</div>
 			<button
 				type="button"
-				onClick={handleAdd}
-				disabled={disabled || isFull || enrolling}
-				title={disabled && !isFull ? "Maximum 5 courses reached" : undefined}
-				className="shrink-0 px-3 py-1.5 text-xs font-medium rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+				onClick={handleToggle}
+				disabled={buttonDisabled}
+				className={`shrink-0 px-3 py-1.5 text-xs font-medium rounded-lg transition-colors cursor-pointer disabled:cursor-not-allowed ${buttonStyle}`}
 			>
 				{buttonLabel}
 			</button>

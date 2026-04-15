@@ -5,30 +5,36 @@ import SectionCard from "./SectionCard";
 
 interface CourseCardProps {
 	course: Course;
-	studentId: number;
 	passedCourseIds: Set<number>;
 }
 
 export default function CourseCard({
 	course,
-	studentId,
 	passedCourseIds,
 }: CourseCardProps) {
 	const [expanded, setExpanded] = useState(false);
-	const { sections, sectionsLoading, fetchSections, schedule } =
-		useCourseStore();
+	const {
+		sectionsByCourseId,
+		sectionsLoadingFor,
+		fetchSections,
+		schedule,
+		pendingEnrollments,
+	} = useCourseStore();
+
+	const sections = sectionsByCourseId[course.id] ?? [];
+	const loading = sectionsLoadingFor.has(course.id);
 
 	const hasUnmetPrereq =
 		course.prerequisiteId !== null &&
 		!passedCourseIds.has(course.prerequisiteId);
 
-	const enrolledCount = schedule?.enrolledSections.length ?? 0;
-	const atMax = enrolledCount >= 5;
-
-	// Check if student is already enrolled in this course
-	const alreadyEnrolled = schedule?.enrolledSections.some(
+	// Already enrolled in this course (any section)
+	const alreadyEnrolled = !!schedule?.enrolledSections.some(
 		(s) => s.courseId === course.id,
 	);
+
+	// Any section of this course staged for enrollment
+	const hasPending = pendingEnrollments.some((s) => s.courseId === course.id);
 
 	const handleExpand = () => {
 		if (!expanded) {
@@ -45,14 +51,14 @@ export default function CourseCard({
 					: "border-gray-200 bg-white hover:border-indigo-300"
 			}`}
 		>
+			{/* Accordion header — always clickable, even when grayed out */}
 			<button
 				type="button"
 				onClick={handleExpand}
-				className="w-full text-left p-4 flex items-center justify-between"
-				disabled={hasUnmetPrereq}
+				className="w-full text-left p-4 flex items-center justify-between cursor-pointer"
 			>
 				<div className="min-w-0 flex-1">
-					<div className="flex items-center gap-2">
+					<div className="flex items-center gap-2 flex-wrap">
 						<span className="font-mono text-sm font-semibold text-indigo-600">
 							{course.code}
 						</span>
@@ -67,6 +73,11 @@ export default function CourseCard({
 								Enrolled
 							</span>
 						)}
+						{hasPending && !alreadyEnrolled && (
+							<span className="text-[10px] bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded font-medium">
+								Pending
+							</span>
+						)}
 					</div>
 					<p className="text-sm text-gray-900 mt-0.5 truncate">{course.name}</p>
 					{hasUnmetPrereq && (
@@ -75,14 +86,21 @@ export default function CourseCard({
 						</p>
 					)}
 				</div>
-				<span className="text-gray-400 ml-2 text-lg">
+				<span className="text-gray-400 ml-2 text-lg shrink-0">
 					{expanded ? "▾" : "▸"}
 				</span>
 			</button>
 
-			{expanded && !hasUnmetPrereq && (
+			{expanded && (
 				<div className="border-t border-gray-100 bg-gray-50 p-3 space-y-2">
-					{sectionsLoading ? (
+					{hasUnmetPrereq && (
+						<p className="text-xs text-red-500 bg-red-50 border border-red-200 rounded px-3 py-2">
+							Prerequisite not met: complete{" "}
+							<span className="font-semibold">{course.prerequisiteCode}</span>{" "}
+							first
+						</p>
+					)}
+					{loading && sections.length === 0 ? (
 						<p className="text-sm text-gray-400 text-center py-2">
 							Loading sections...
 						</p>
@@ -95,8 +113,7 @@ export default function CourseCard({
 							<SectionCard
 								key={section.id}
 								section={section}
-								studentId={studentId}
-								disabled={atMax || alreadyEnrolled || false}
+								courseAlreadyEnrolled={alreadyEnrolled}
 							/>
 						))
 					)}

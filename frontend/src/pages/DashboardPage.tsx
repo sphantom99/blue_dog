@@ -3,6 +3,9 @@ import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import ProgressBar from "../components/ProgressBar";
 import { CardSkeleton, TableSkeleton } from "../components/Skeleton";
+import { DAY_NAMES } from "../lib/dayNames";
+import { SUBJECT_COLORS } from "../lib/specializationColors";
+import { useCourseStore } from "../store/useCourseStore";
 import { useStudentStore } from "../store/useStudentStore";
 
 export default function DashboardPage() {
@@ -12,6 +15,14 @@ export default function DashboardPage() {
 	useEffect(() => {
 		if (!studentId) navigate("/login");
 	}, [studentId, navigate]);
+
+	const { schedule, fetchSchedule } = useCourseStore();
+
+	useEffect(() => {
+		if (studentId) {
+			fetchSchedule(studentId);
+		}
+	}, [studentId, fetchSchedule]);
 
 	if (!studentId) return null;
 
@@ -87,6 +98,38 @@ export default function DashboardPage() {
 					/>
 				</div>
 
+				<div className="bg-white rounded-xl shadow p-6">
+					<h3 className="text-lg font-semibold text-gray-900 mb-3">
+						Current Subjects
+					</h3>
+					{schedule?.enrolledSections.length === 0 ? (
+						<p className="text-gray-500">
+							Not enrolled in any courses this semester.
+						</p>
+					) : (
+						<ul className="list-disc list-inside space-y-1">
+							{schedule?.enrolledSections.map((section) => (
+								<li
+									key={section.id}
+									className={`rounded-lg px-2 py-1 ${SUBJECT_COLORS[section.specialization]?.bg || "bg-gray-100"} ${SUBJECT_COLORS[section.specialization]?.text || "text-gray-900"}`}
+								>
+									{section.courseCode} - {section.courseName}
+									<span className="text-sm text-gray-500">
+										{" — "}
+										{section.meetings
+											.map((m) => {
+												const day = DAY_NAMES[m.timeslot.dayOfWeek] || "?";
+												const start = m.timeslot.startTime.slice(0, 5);
+												return `${day} ${start}`;
+											})
+											.join(", ")}
+									</span>
+								</li>
+							))}
+						</ul>
+					)}
+				</div>
+
 				{/* Course History */}
 				<div className="bg-white rounded-xl shadow overflow-hidden">
 					<div className="p-6 border-b border-gray-200 flex items-center justify-between">
@@ -96,7 +139,7 @@ export default function DashboardPage() {
 						<button
 							type="button"
 							onClick={() => navigate("/enroll")}
-							className="px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors"
+							className="px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors cursor-pointer"
 						>
 							Plan Semester
 						</button>
@@ -124,36 +167,45 @@ export default function DashboardPage() {
 								</tr>
 							</thead>
 							<tbody className="divide-y divide-gray-200">
-								{profile.courseHistory.map((ch) => (
-									<tr
-										key={`${ch.courseId}-${ch.semesterYear}`}
-										className="hover:bg-gray-50"
-									>
-										<td className="px-6 py-4">
-											<p className="font-medium text-gray-900">
-												{ch.courseCode}
-											</p>
-											<p className="text-sm text-gray-500">{ch.courseName}</p>
-										</td>
-										<td className="px-6 py-4 text-sm text-gray-600">
-											{ch.semesterName} {ch.semesterYear}
-										</td>
-										<td className="px-6 py-4 text-center text-sm text-gray-600">
-											{ch.credits}
-										</td>
-										<td className="px-6 py-4 text-center">
-											<span
-												className={`inline-flex px-2.5 py-0.5 rounded-full text-xs font-medium ${
-													ch.status === "passed"
-														? "bg-green-100 text-green-800"
-														: "bg-red-100 text-red-800"
-												}`}
-											>
-												{ch.status}
-											</span>
-										</td>
-									</tr>
-								))}
+								{profile.courseHistory
+									.sort((a, b) => {
+										const semA = `${a.semesterYear}-${a.semesterName}`;
+										const semB = `${b.semesterYear}-${b.semesterName}`;
+										if (semA !== semB) {
+											return semB.localeCompare(semA);
+										}
+										return a.courseCode.localeCompare(b.courseCode);
+									})
+									.map((ch) => (
+										<tr
+											key={`${ch.courseId}-${ch.semesterYear}`}
+											className="hover:bg-gray-50"
+										>
+											<td className="px-6 py-4">
+												<p className="font-medium text-gray-900">
+													{ch.courseCode}
+												</p>
+												<p className="text-sm text-gray-500">{ch.courseName}</p>
+											</td>
+											<td className="px-6 py-4 text-sm text-gray-600">
+												{ch.semesterName} {ch.semesterYear}
+											</td>
+											<td className="px-6 py-4 text-center text-sm text-gray-600">
+												{ch.credits}
+											</td>
+											<td className="px-6 py-4 text-center">
+												<span
+													className={`inline-flex px-2.5 py-0.5 rounded-full text-xs font-medium ${
+														ch.status === "passed"
+															? "bg-green-100 text-green-800"
+															: "bg-red-100 text-red-800"
+													}`}
+												>
+													{ch.status}
+												</span>
+											</td>
+										</tr>
+									))}
 							</tbody>
 						</table>
 					)}

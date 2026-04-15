@@ -14,7 +14,7 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
     @Query("SELECT c FROM Course c " +
             "LEFT JOIN FETCH c.specialization " +
             "LEFT JOIN FETCH c.prerequisite " +
-            "WHERE c.gradeLevelMin <= :gradeLevel AND c.gradeLevelMax >= :gradeLevel " +
+            "WHERE c.gradeLevelMin <= :gradeLevel " +
             "AND c.semesterOrder = :semesterOrder")
     List<Course> findAvailableCourses(@Param("gradeLevel") int gradeLevel,
                                       @Param("semesterOrder") int semesterOrder);

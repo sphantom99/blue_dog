@@ -18,6 +18,10 @@ export default function EnrollPage() {
 		fetchCourses,
 		fetchSchedule,
 		activeSemester,
+		pendingEnrollments,
+		pendingLoading,
+		cancelPending,
+		commitPending,
 	} = useCourseStore();
 	const navigate = useNavigate();
 
@@ -101,13 +105,18 @@ export default function EnrollPage() {
 	if (!profile || !studentId) return null;
 
 	const enrolledCount = schedule?.enrolledSections.length ?? 0;
+	const pendingCount = pendingEnrollments.length;
+	const totalCount = enrolledCount + pendingCount;
+
+	const handleSave = () => commitPending(studentId);
+	const handleCancel = () => cancelPending();
 
 	return (
-		<div className="min-h-screen bg-gray-50 flex flex-col">
+		<div className="h-screen bg-gray-50 flex flex-col overflow-hidden">
 			<Navbar />
 
 			{/* Header */}
-			<div className="bg-white border-b border-gray-200 px-6 py-3 flex items-center justify-between">
+			<div className="bg-white border-b border-gray-200 px-6 py-3 flex items-center justify-between shrink-0">
 				<div>
 					<h1 className="text-lg font-bold text-gray-900">Plan Semester</h1>
 					{activeSemester && (
@@ -116,25 +125,29 @@ export default function EnrollPage() {
 						</p>
 					)}
 				</div>
-				<div className="text-sm font-medium">
+				<div className="text-sm font-medium flex items-center gap-2">
 					<span
-						className={enrolledCount >= 5 ? "text-red-600" : "text-indigo-600"}
+						className={totalCount >= 5 ? "text-red-600" : "text-indigo-600"}
 					>
-						{enrolledCount}/5
+						{enrolledCount}
+						{pendingCount > 0 && (
+							<span className="text-blue-500">+{pendingCount}</span>
+						)}
+						/5
 					</span>{" "}
-					<span className="text-gray-500">courses enrolled</span>
+					<span className="text-gray-500">courses</span>
 				</div>
 			</div>
 
 			{/* Split pane: left = course browser, right = calendar */}
-			<div ref={containerRef} className="flex-1 flex overflow-hidden">
+			<div ref={containerRef} className="flex-1 flex overflow-hidden min-h-0">
 				{/* Left: Course Browser */}
 				<div
-					className="overflow-y-auto border-r border-gray-200 bg-white"
+					className="flex flex-col border-r border-gray-200 bg-white overflow-hidden"
 					style={{ width: `${splitPct}%` }}
 				>
-					{/* Filters */}
-					<div className="sticky top-0 bg-white z-10 p-4 border-b border-gray-100 space-y-3">
+					{/* Filters — sticky */}
+					<div className="shrink-0 bg-white z-10 p-4 border-b border-gray-100 space-y-3">
 						<input
 							type="text"
 							placeholder="Search courses..."
@@ -148,7 +161,7 @@ export default function EnrollPage() {
 									type="button"
 									key={t}
 									onClick={() => setTypeFilter(t)}
-									className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
+									className={`px-3 py-1 rounded-full text-xs font-medium transition-colors cursor-pointer ${
 										typeFilter === t
 											? "bg-indigo-600 text-white"
 											: "bg-gray-100 text-gray-600 hover:bg-gray-200"
@@ -160,8 +173,8 @@ export default function EnrollPage() {
 						</div>
 					</div>
 
-					{/* Course list */}
-					<div className="p-4 space-y-2">
+					{/* Scrollable course list */}
+					<div className="flex-1 overflow-y-auto p-4 space-y-2">
 						{coursesLoading ? (
 							<CourseListSkeleton count={6} />
 						) : filteredCourses.length === 0 ? (
@@ -173,7 +186,6 @@ export default function EnrollPage() {
 								<CourseCard
 									key={course.id}
 									course={course}
-									studentId={studentId}
 									passedCourseIds={passedCourseIds}
 								/>
 							))
@@ -182,6 +194,7 @@ export default function EnrollPage() {
 				</div>
 
 				{/* Resizable divider */}
+				{/** biome-ignore lint/a11y/useSemanticElements: we need this because its draggable */}
 				<div
 					role="separator"
 					aria-valuenow={splitPct}
@@ -207,11 +220,37 @@ export default function EnrollPage() {
 					) : (
 						<CalendarGrid
 							enrolledSections={schedule?.enrolledSections ?? []}
+							pendingSections={pendingEnrollments}
 							studentId={studentId}
 						/>
 					)}
 				</div>
 			</div>
+
+			{/* FAB — appears when there are pending enrollments */}
+			{pendingCount > 0 && (
+				<div className="fixed bottom-6 right-6 flex items-center gap-3 z-50">
+					<button
+						type="button"
+						onClick={handleCancel}
+						disabled={pendingLoading}
+						className="px-4 py-2.5 rounded-full text-sm font-semibold bg-white text-gray-700 border border-gray-300 shadow-lg hover:bg-gray-50 disabled:opacity-50 transition-colors cursor-pointer"
+					>
+						Cancel
+					</button>
+					<button
+						type="button"
+						onClick={handleSave}
+						disabled={pendingLoading}
+						className="px-5 py-2.5 rounded-full text-sm font-semibold bg-indigo-600 text-white shadow-lg hover:bg-indigo-700 disabled:opacity-50 transition-colors cursor-pointer flex items-center gap-2"
+					>
+						{pendingLoading ? (
+							<span className="inline-block w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+						) : null}
+						Save {pendingCount} course{pendingCount !== 1 ? "s" : ""}
+					</button>
+				</div>
+			)}
 		</div>
 	);
 }

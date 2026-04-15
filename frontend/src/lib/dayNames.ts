@@ -1,0 +1,1 @@
+export const DAY_NAMES = ["", "Mon", "Tue", "Wed", "Thu", "Fri"];

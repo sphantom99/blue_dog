@@ -1,0 +1,31 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile.dev
+    working_dir: /workspace/backend
+    volumes:
+      - ./backend:/workspace/backend
+      - ./maplewood_school.sqlite:/workspace/maplewood_school.sqlite
+      - maven-cache:/root/.m2
+    ports:
+      - "8080:8080"
+    command: mvn spring-boot:run
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:sqlite:/workspace/maplewood_school.sqlite
+
+  frontend:
+    image: node:20
+    working_dir: /workspace/frontend
+    volumes:
+      - ./frontend:/workspace/frontend
+      - frontend-modules:/workspace/frontend/node_modules
+    ports:
+      - "5173:5173"
+    # npm install first so node_modules is populated, then start Vite with --host
+    # so the dev server binds to 0.0.0.0 and is reachable from your host machine
+    command: sh -c "npm install && npm run dev -- --host 0.0.0.0"
+
+volumes:
+  maven-cache: # persists ~/.m2 across restarts so Maven doesn't re-download
+  frontend-modules: # persists node_modules across restarts

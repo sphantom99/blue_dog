@@ -13,6 +13,7 @@ public class CourseSectionDTO {
     private Long courseId;
     private String courseCode;
     private String courseName;
+    private String specialization;
     private String teacherFirstName;
     private String teacherLastName;
     private String sectionLabel;

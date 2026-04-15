@@ -68,6 +68,7 @@ export interface CourseSection {
     courseId: number;
     courseCode: string;
     courseName: string;
+    specialization: string | null;
     teacherFirstName: string;
     teacherLastName: string;
     sectionLabel: string;
