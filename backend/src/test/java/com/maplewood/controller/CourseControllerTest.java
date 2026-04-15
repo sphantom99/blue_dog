@@ -51,7 +51,7 @@ class CourseControllerTest {
     @Test
     void getSectionsForCourse_returnsSections() throws Exception {
         CourseSectionDTO section = new CourseSectionDTO(
-                1L, 1L, "ENG101", "English I", "John", "Smith", "A",
+                1L, null, 1L, "ENG101", "English I", "John", "Smith", "A",
                 10, 3L, List.of());
         when(courseService.getSectionsForCourse(1L)).thenReturn(List.of(section));
 

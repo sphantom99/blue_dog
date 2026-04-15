@@ -1,5 +1,5 @@
-import type { CourseSection } from "../types";
 import { useCourseStore } from "../store/useCourseStore";
+import type { CourseSection } from "../types";
 
 interface ScheduleBlockProps {
 	section: CourseSection;
@@ -16,9 +16,7 @@ export default function ScheduleBlock({
 }: ScheduleBlockProps) {
 	const { drop, enrolling } = useCourseStore();
 
-	const meeting = section.meetings.find(
-		(m) => m.timeslot.id === timeslotId,
-	);
+	const meeting = section.meetings.find((m) => m.timeslot.id === timeslotId);
 
 	const handleDrop = async () => {
 		if (!section.enrollmentId) return;

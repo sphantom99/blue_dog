@@ -2,21 +2,36 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import ProgressBar from "../components/ProgressBar";
+import { CardSkeleton, TableSkeleton } from "../components/Skeleton";
 import { useStudentStore } from "../store/useStudentStore";
 
 export default function DashboardPage() {
-	const { profile, studentId } = useStudentStore();
+	const { profile, studentId, loading } = useStudentStore();
 	const navigate = useNavigate();
 
 	useEffect(() => {
 		if (!studentId) navigate("/login");
 	}, [studentId, navigate]);
 
-	if (!profile) return null;
+	if (!studentId) return null;
 
-	const graduationPct = profile.totalCreditsRequired > 0
-		? Math.round((profile.creditsPassed / profile.totalCreditsRequired) * 100)
-		: 0;
+	if (loading || !profile) {
+		return (
+			<div className="min-h-screen bg-gray-50">
+				<Navbar />
+				<main className="max-w-5xl mx-auto px-4 py-8 space-y-8">
+					<CardSkeleton />
+					<CardSkeleton />
+					<TableSkeleton rows={4} />
+				</main>
+			</div>
+		);
+	}
+
+	const graduationPct =
+		profile.totalCreditsRequired > 0
+			? Math.round((profile.creditsPassed / profile.totalCreditsRequired) * 100)
+			: 0;
 
 	return (
 		<div className="min-h-screen bg-gray-50">
@@ -88,8 +103,7 @@ export default function DashboardPage() {
 					</div>
 					{profile.courseHistory.length === 0 ? (
 						<div className="p-6 text-center text-gray-500">
-							No course history yet. Start planning your first
-							semester!
+							No course history yet. Start planning your first semester!
 						</div>
 					) : (
 						<table className="w-full">
@@ -111,18 +125,18 @@ export default function DashboardPage() {
 							</thead>
 							<tbody className="divide-y divide-gray-200">
 								{profile.courseHistory.map((ch) => (
-									<tr key={`${ch.courseId}-${ch.semesterYear}`} className="hover:bg-gray-50">
+									<tr
+										key={`${ch.courseId}-${ch.semesterYear}`}
+										className="hover:bg-gray-50"
+									>
 										<td className="px-6 py-4">
 											<p className="font-medium text-gray-900">
 												{ch.courseCode}
 											</p>
-											<p className="text-sm text-gray-500">
-												{ch.courseName}
-											</p>
+											<p className="text-sm text-gray-500">{ch.courseName}</p>
 										</td>
 										<td className="px-6 py-4 text-sm text-gray-600">
-											{ch.semesterName}{" "}
-											{ch.semesterYear}
+											{ch.semesterName} {ch.semesterYear}
 										</td>
 										<td className="px-6 py-4 text-center text-sm text-gray-600">
 											{ch.credits}

@@ -6,6 +6,7 @@ import {
     semestersApi,
     studentsApi,
 } from "../api/client";
+import { showToast } from "../lib/toastService";
 import type {
     Course,
     CourseSection,
@@ -195,10 +196,14 @@ export const useCourseStore = create<CourseState>((set, get) => ({
             const { data } = await enrollmentsApi.drop(enrollmentId);
             if (!data.success) {
                 set({ enrollmentErrors: data.errors, enrolling: false });
+                for (const err of data.errors) {
+                    showToast("error", err.code.replace(/_/g, " "), err.message);
+                }
                 return data;
             }
             // Re-fetch schedule to sync with server
             await get().fetchSchedule(studentId);
+            showToast("success", "Course dropped");
             set({ enrolling: false });
             return data;
         } catch (err: unknown) {

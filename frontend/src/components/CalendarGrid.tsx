@@ -1,5 +1,5 @@
-import type { CourseSection } from "../types";
 import { useCourseStore } from "../store/useCourseStore";
+import type { CourseSection } from "../types";
 import ScheduleBlock from "./ScheduleBlock";
 
 const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri"];
@@ -91,9 +91,7 @@ export default function CalendarGrid({
 										section={entry.section}
 										timeslotId={entry.timeslotId}
 										studentId={studentId}
-										isConflict={conflictingSlotIds.has(
-											entry.timeslotId,
-										)}
+										isConflict={conflictingSlotIds.has(entry.timeslotId)}
 									/>
 								))}
 							</div>

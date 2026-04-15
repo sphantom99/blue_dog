@@ -23,21 +23,13 @@ export default function Navbar() {
 			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 				<div className="flex items-center justify-between h-16">
 					<div className="flex items-center gap-4">
-						<span className="text-white font-bold text-lg">
-							Maplewood
-						</span>
+						<span className="text-white font-bold text-lg">Maplewood</span>
 						{profile && (
 							<div className="flex gap-1">
-								<Link
-									to="/dashboard"
-									className={linkClass("/dashboard")}
-								>
+								<Link to="/dashboard" className={linkClass("/dashboard")}>
 									Dashboard
 								</Link>
-								<Link
-									to="/enroll"
-									className={linkClass("/enroll")}
-								>
+								<Link to="/enroll" className={linkClass("/enroll")}>
 									Plan Semester
 								</Link>
 							</div>

@@ -1,5 +1,5 @@
-import type { CourseSection } from "../types";
 import { useCourseStore } from "../store/useCourseStore";
+import type { CourseSection } from "../types";
 
 const DAY_NAMES = ["", "Mon", "Tue", "Wed", "Thu", "Fri"];
 
@@ -30,6 +30,14 @@ export default function SectionCard({
 		})
 		.join(", ");
 
+	const buttonLabel = isFull
+		? "Full"
+		: disabled
+			? "Max"
+			: enrolling
+				? "..."
+				: "Add";
+
 	return (
 		<div className="bg-white rounded-lg border border-gray-200 p-3 flex items-center justify-between gap-3">
 			<div className="min-w-0 flex-1">
@@ -52,9 +60,10 @@ export default function SectionCard({
 				type="button"
 				onClick={handleAdd}
 				disabled={disabled || isFull || enrolling}
+				title={disabled && !isFull ? "Maximum 5 courses reached" : undefined}
 				className="shrink-0 px-3 py-1.5 text-xs font-medium rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
 			>
-				{isFull ? "Full" : "Add"}
+				{buttonLabel}
 			</button>
 		</div>
 	);

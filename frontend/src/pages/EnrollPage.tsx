@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import CalendarGrid from "../components/CalendarGrid";
 import CourseCard from "../components/CourseCard";
 import Navbar from "../components/Navbar";
+import { CalendarSkeleton, CourseListSkeleton } from "../components/Skeleton";
 import { useCourseStore } from "../store/useCourseStore";
 import { useStudentStore } from "../store/useStudentStore";
 
@@ -13,8 +14,6 @@ export default function EnrollPage() {
 		coursesLoading,
 		schedule,
 		scheduleLoading,
-		enrollmentErrors,
-		clearEnrollmentErrors,
 		fetchActiveSemester,
 		fetchCourses,
 		fetchSchedule,
@@ -65,8 +64,7 @@ export default function EnrollPage() {
 			if (search) {
 				const s = search.toLowerCase();
 				return (
-					c.code.toLowerCase().includes(s) ||
-					c.name.toLowerCase().includes(s)
+					c.code.toLowerCase().includes(s) || c.name.toLowerCase().includes(s)
 				);
 			}
 			return true;
@@ -100,13 +98,6 @@ export default function EnrollPage() {
 		};
 	}, []);
 
-	// Auto-dismiss enrollment errors after 5 seconds
-	useEffect(() => {
-		if (enrollmentErrors.length === 0) return;
-		const timer = setTimeout(clearEnrollmentErrors, 5000);
-		return () => clearTimeout(timer);
-	}, [enrollmentErrors, clearEnrollmentErrors]);
-
 	if (!profile || !studentId) return null;
 
 	const enrolledCount = schedule?.enrolledSections.length ?? 0;
@@ -115,27 +106,10 @@ export default function EnrollPage() {
 		<div className="min-h-screen bg-gray-50 flex flex-col">
 			<Navbar />
 
-			{/* Toast errors */}
-			{enrollmentErrors.length > 0 && (
-				<div className="fixed top-20 right-4 z-50 space-y-2 max-w-sm">
-					{enrollmentErrors.map((err) => (
-						<div
-							key={err.code}
-							className="bg-red-50 border border-red-300 text-red-800 text-sm px-4 py-3 rounded-lg shadow-lg"
-						>
-							<p className="font-medium">{err.code.replace(/_/g, " ")}</p>
-							<p className="text-xs mt-0.5">{err.message}</p>
-						</div>
-					))}
-				</div>
-			)}
-
 			{/* Header */}
 			<div className="bg-white border-b border-gray-200 px-6 py-3 flex items-center justify-between">
 				<div>
-					<h1 className="text-lg font-bold text-gray-900">
-						Plan Semester
-					</h1>
+					<h1 className="text-lg font-bold text-gray-900">Plan Semester</h1>
 					{activeSemester && (
 						<p className="text-sm text-gray-500">
 							{activeSemester.name} {activeSemester.year}
@@ -144,11 +118,7 @@ export default function EnrollPage() {
 				</div>
 				<div className="text-sm font-medium">
 					<span
-						className={
-							enrolledCount >= 5
-								? "text-red-600"
-								: "text-indigo-600"
-						}
+						className={enrolledCount >= 5 ? "text-red-600" : "text-indigo-600"}
 					>
 						{enrolledCount}/5
 					</span>{" "}
@@ -157,10 +127,7 @@ export default function EnrollPage() {
 			</div>
 
 			{/* Split pane: left = course browser, right = calendar */}
-			<div
-				ref={containerRef}
-				className="flex-1 flex overflow-hidden"
-			>
+			<div ref={containerRef} className="flex-1 flex overflow-hidden">
 				{/* Left: Course Browser */}
 				<div
 					className="overflow-y-auto border-r border-gray-200 bg-white"
@@ -187,9 +154,7 @@ export default function EnrollPage() {
 											: "bg-gray-100 text-gray-600 hover:bg-gray-200"
 									}`}
 								>
-									{t === "all"
-										? "All"
-										: t.charAt(0).toUpperCase() + t.slice(1)}
+									{t === "all" ? "All" : t.charAt(0).toUpperCase() + t.slice(1)}
 								</button>
 							))}
 						</div>
@@ -198,9 +163,7 @@ export default function EnrollPage() {
 					{/* Course list */}
 					<div className="p-4 space-y-2">
 						{coursesLoading ? (
-							<p className="text-sm text-gray-400 text-center py-8">
-								Loading courses...
-							</p>
+							<CourseListSkeleton count={6} />
 						) : filteredCourses.length === 0 ? (
 							<p className="text-sm text-gray-400 text-center py-8">
 								No courses found
@@ -240,14 +203,10 @@ export default function EnrollPage() {
 					style={{ width: `${100 - splitPct}%` }}
 				>
 					{scheduleLoading ? (
-						<p className="text-sm text-gray-400 text-center py-8">
-							Loading schedule...
-						</p>
+						<CalendarSkeleton />
 					) : (
 						<CalendarGrid
-							enrolledSections={
-								schedule?.enrolledSections ?? []
-							}
+							enrolledSections={schedule?.enrolledSections ?? []}
 							studentId={studentId}
 						/>
 					)}

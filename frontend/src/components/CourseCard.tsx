@@ -1,7 +1,7 @@
 import { useState } from "react";
+import { useCourseStore } from "../store/useCourseStore";
 import type { Course } from "../types";
 import SectionCard from "./SectionCard";
-import { useCourseStore } from "../store/useCourseStore";
 
 interface CourseCardProps {
 	course: Course;
@@ -56,9 +56,7 @@ export default function CourseCard({
 						<span className="font-mono text-sm font-semibold text-indigo-600">
 							{course.code}
 						</span>
-						<span className="text-sm text-gray-400">
-							{course.credits} cr
-						</span>
+						<span className="text-sm text-gray-400">{course.credits} cr</span>
 						{course.courseType === "core" && (
 							<span className="text-[10px] bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded font-medium uppercase">
 								Core
@@ -70,9 +68,7 @@ export default function CourseCard({
 							</span>
 						)}
 					</div>
-					<p className="text-sm text-gray-900 mt-0.5 truncate">
-						{course.name}
-					</p>
+					<p className="text-sm text-gray-900 mt-0.5 truncate">{course.name}</p>
 					{hasUnmetPrereq && (
 						<p className="text-xs text-red-500 mt-1">
 							Requires: {course.prerequisiteCode}
@@ -100,9 +96,7 @@ export default function CourseCard({
 								key={section.id}
 								section={section}
 								studentId={studentId}
-								disabled={
-									atMax || alreadyEnrolled || false
-								}
+								disabled={atMax || alreadyEnrolled || false}
 							/>
 						))
 					)}
