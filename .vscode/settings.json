@@ -1,0 +1,6 @@
+{
+	"java.configuration.updateBuildConfiguration": "automatic",
+	"java.project.sourcePaths": [],
+	"java.project.referencedLibraries": [],
+	"maven.executable.path": "mvn"
+}

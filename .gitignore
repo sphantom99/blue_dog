@@ -1,1 +1,20 @@
 /challenge
+
+# Java / Maven
+**/target/
+*.class
+*.jar
+*.war
+
+# IDE
+.idea/
+*.iml
+.project
+.classpath
+.settings/
+
+# OS
+.DS_Store
+
+# Database
+*.sqlite
