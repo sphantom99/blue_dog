@@ -109,8 +109,10 @@ public class EnrollmentService {
                 .map(m -> m.getTimeslot().getId())
                 .collect(Collectors.toSet());
 
-        List<Enrollment> currentEnrollments = enrollmentRepository.findByStudentIdAndSemesterIdAndStatus(
-                studentId, activeSemester.getId(), "enrolled");
+        List<Enrollment> currentEnrollments = enrollmentRepository.findByStudentIdAndSemesterIdWithDetails(
+                studentId, activeSemester.getId()).stream()
+                .filter(e -> "enrolled".equals(e.getStatus()))
+                .collect(Collectors.toList());
 
         for (Enrollment existing : currentEnrollments) {
             CourseSection existingSection = existing.getSection();
