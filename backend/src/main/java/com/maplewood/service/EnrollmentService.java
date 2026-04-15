@@ -186,7 +186,11 @@ public class EnrollmentService {
 
         List<CourseSectionDTO> sections = enrollments.stream()
                 .filter(e -> "enrolled".equals(e.getStatus()))
-                .map(e -> mapToCourseSectionDTO(e.getSection()))
+                .map(e -> {
+                    CourseSectionDTO dto = mapToCourseSectionDTO(e.getSection());
+                    dto.setEnrollmentId(e.getId());
+                    return dto;
+                })
                 .collect(Collectors.toList());
 
         return new ScheduleDTO(semesterId, semester.getName(), sections);
@@ -214,6 +218,7 @@ public class EnrollmentService {
 
         return new CourseSectionDTO(
                 section.getId(),
+                null,
                 section.getCourse().getId(),
                 section.getCourse().getCode(),
                 section.getCourse().getName(),

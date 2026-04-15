@@ -64,6 +64,7 @@ export interface TimeSlot {
 // Matches backend CourseSectionDTO
 export interface CourseSection {
     id: number;
+    enrollmentId: number | null;
     courseId: number;
     courseCode: string;
     courseName: string;

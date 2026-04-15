@@ -9,6 +9,7 @@ import java.util.List;
 @AllArgsConstructor
 public class CourseSectionDTO {
     private Long id;
+    private Long enrollmentId;
     private Long courseId;
     private String courseCode;
     private String courseName;
