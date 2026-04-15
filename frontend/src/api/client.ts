@@ -3,7 +3,7 @@ import type {
     Course,
     CourseSection,
     EnrollmentResponse,
-    ScheduleEntry,
+    Schedule,
     Semester,
     StudentProfile,
 } from "../types";
@@ -34,9 +34,10 @@ export const coursesApi = {
 };
 
 export const studentsApi = {
-    getById: (id: number) => apiClient.get<StudentProfile>(`/students/${id}`),
+    getProfile: (id: number) =>
+        apiClient.get<StudentProfile>(`/students/${id}`),
     getSchedule: (id: number) =>
-        apiClient.get<ScheduleEntry[]>(`/students/${id}/schedule`),
+        apiClient.get<Schedule>(`/students/${id}/schedule`),
 };
 
 export const enrollmentsApi = {

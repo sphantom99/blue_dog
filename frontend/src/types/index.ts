@@ -1,3 +1,4 @@
+// Matches backend CourseDTO
 export interface Course {
     id: number;
     code: string;
@@ -5,43 +6,43 @@ export interface Course {
     description: string;
     credits: number;
     hoursPerWeek: number;
-    prerequisiteId: number | null;
-    courseType: 'core' | 'elective';
-    gradeLevel: {
-        min: number;
-        max: number;
-    };
-    semesterOrder: number;
     specialization: string;
+    courseType: string;
+    gradeLevelMin: number;
+    gradeLevelMax: number;
+    semesterOrder: number;
+    prerequisiteId: number | null;
+    prerequisiteCode: string | null;
+    prerequisiteName: string | null;
 }
 
-export interface Student {
+// Matches backend StudentProfileDTO
+export interface StudentProfile {
     id: number;
     firstName: string;
     lastName: string;
-    gradeLevel: number;
     email: string;
+    gradeLevel: number;
     status: string;
-}
-
-export interface StudentProfile extends Student {
     gpa: number;
-    creditsEarned: number;
-    totalCreditsAttempted: number;
+    creditsPassed: number;
+    creditsAttempted: number;
+    totalCreditsRequired: number;
     courseHistory: CourseHistory[];
 }
 
+// Matches backend CourseHistoryDTO
 export interface CourseHistory {
-    id: number;
     courseId: number;
     courseCode: string;
     courseName: string;
     credits: number;
-    semesterId: number;
     semesterName: string;
-    status: 'passed' | 'failed';
+    semesterYear: number;
+    status: string;
 }
 
+// Matches backend SemesterDTO
 export interface Semester {
     id: number;
     name: string;
@@ -52,6 +53,7 @@ export interface Semester {
     isActive: boolean;
 }
 
+// Matches backend TimeSlotDTO
 export interface TimeSlot {
     id: number;
     dayOfWeek: number;
@@ -59,39 +61,43 @@ export interface TimeSlot {
     endTime: string;
 }
 
+// Matches backend CourseSectionDTO
 export interface CourseSection {
     id: number;
     courseId: number;
     courseCode: string;
     courseName: string;
-    credits: number;
+    teacherFirstName: string;
+    teacherLastName: string;
     sectionLabel: string;
-    teacherName: string;
-    semesterId: number;
-    meetings: SectionMeeting[];
-    enrolledCount: number;
     capacity: number;
+    enrolledCount: number;
+    meetings: SectionMeeting[];
 }
 
+// Matches backend SectionMeetingDTO
 export interface SectionMeeting {
     id: number;
     classroomName: string;
-    timeSlot: TimeSlot;
+    classroomCapacity: number;
+    timeslot: TimeSlot;
 }
 
-export interface ScheduleEntry {
-    enrollmentId: number;
-    section: CourseSection;
-    status: 'enrolled' | 'dropped';
+// Matches backend ScheduleDTO
+export interface Schedule {
+    semesterId: number;
+    semesterName: string;
+    enrolledSections: CourseSection[];
 }
 
+// Matches backend ValidationErrorDTO
 export interface ValidationError {
     code: string;
     message: string;
 }
 
+// Matches backend EnrollmentResponseDTO
 export interface EnrollmentResponse {
     success: boolean;
-    enrollmentId?: number;
     errors: ValidationError[];
 }

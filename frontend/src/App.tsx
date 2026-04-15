@@ -1,13 +1,16 @@
+import { Navigate, Route, Routes } from "react-router-dom";
+import DashboardPage from "./pages/DashboardPage";
+import EnrollPage from "./pages/EnrollPage";
+import LoginPage from "./pages/LoginPage";
+
 function App() {
 	return (
-		<div className="min-h-screen bg-gray-50 flex items-center justify-center">
-			<div className="text-center">
-				<h1 className="text-3xl font-bold text-gray-900">
-					Maplewood Course Planning
-				</h1>
-				<p className="mt-2 text-gray-600">System loading...</p>
-			</div>
-		</div>
+		<Routes>
+			<Route path="/login" element={<LoginPage />} />
+			<Route path="/dashboard" element={<DashboardPage />} />
+			<Route path="/enroll" element={<EnrollPage />} />
+			<Route path="*" element={<Navigate to="/login" replace />} />
+		</Routes>
 	);
 }
 
