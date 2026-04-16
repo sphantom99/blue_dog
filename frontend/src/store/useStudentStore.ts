@@ -8,6 +8,8 @@ interface StudentState {
     loading: boolean;
     error: string | null;
 
+    graduationPct: number;
+
     setStudentId: (id: number) => void;
     fetchProfile: (id: number) => Promise<void>;
     logout: () => void;
@@ -18,6 +20,7 @@ export const useStudentStore = create<StudentState>((set) => ({
     profile: null,
     loading: false,
     error: null,
+    graduationPct: 0,
 
     setStudentId: (id) => set({ studentId: id }),
 
@@ -25,7 +28,11 @@ export const useStudentStore = create<StudentState>((set) => ({
         set({ loading: true, error: null });
         try {
             const { data } = await studentsApi.getProfile(id);
-            set({ profile: data, studentId: id, loading: false });
+
+            const graduationPct = data.totalCreditsRequired > 0
+                ? Math.round((data.creditsPassed / data.totalCreditsRequired) * 100)
+                : 0;
+            set({ profile: data, studentId: id, loading: false, graduationPct });
         } catch {
             set({ error: "Failed to load student profile", loading: false });
         }

@@ -63,9 +63,15 @@
 
   /* ── Animations ─────────────────────────────────────────────────────────── */
   --animate-slide-in-from-right: slide-in-from-right 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+  --animate-extend-to-full-width: extend-to-full-width 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 @keyframes slide-in-from-right {
   from { transform: translateX(120%); opacity: 0; }
   to   { transform: translateX(0);    opacity: 1; }
+}
+
+@keyframes extend-to-full-width {
+  from { width: 0; }
+  to   { width: 100%; }
 }

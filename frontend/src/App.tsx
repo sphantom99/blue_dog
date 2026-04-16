@@ -1,6 +1,6 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import ToastContainer from "./components/Toast";
-import DashboardPage from "./pages/DashboardPage";
+import DashboardPage from "./pages/Dashboard/DashboardPage";
 import EnrollPage from "./pages/EnrollPage";
 import LoginPage from "./pages/LoginPage";
 
