@@ -2,6 +2,68 @@ import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useStudentStore } from "../store/useStudentStore";
 
+const NAV_ITEMS = [
+	{
+		to: "/dashboard",
+		label: "Dashboard",
+		icon: (
+			<svg
+				className="w-4 h-4 shrink-0"
+				fill="none"
+				viewBox="0 0 24 24"
+				stroke="currentColor"
+				aria-hidden="true"
+			>
+				<path
+					strokeLinecap="round"
+					strokeLinejoin="round"
+					strokeWidth={2}
+					d="M3 7h18M3 12h18M3 17h18"
+				/>
+			</svg>
+		),
+	},
+	{
+		to: "/enroll",
+		label: "Plan Semester",
+		icon: (
+			<svg
+				className="w-4 h-4 shrink-0"
+				fill="none"
+				viewBox="0 0 24 24"
+				stroke="currentColor"
+				aria-hidden="true"
+			>
+				<path
+					strokeLinecap="round"
+					strokeLinejoin="round"
+					strokeWidth={2}
+					d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+				/>
+			</svg>
+		),
+	},
+];
+
+interface NavLinksProps {
+	getClass: (path: string) => string;
+	showIcons?: boolean;
+	onClick?: () => void;
+}
+
+function NavLinks({ getClass, showIcons = false, onClick }: NavLinksProps) {
+	return (
+		<>
+			{NAV_ITEMS.map(({ to, label, icon }) => (
+				<Link key={to} to={to} className={getClass(to)} onClick={onClick}>
+					{showIcons && icon}
+					{label}
+				</Link>
+			))}
+		</>
+	);
+}
+
 export default function Navbar() {
 	const { profile, logout } = useStudentStore();
 	const navigate = useNavigate();
@@ -38,12 +100,7 @@ export default function Navbar() {
 							{/* Desktop nav links */}
 							{profile && (
 								<div className="hidden md:flex gap-1">
-									<Link to="/dashboard" className={linkClass("/dashboard")}>
-										Dashboard
-									</Link>
-									<Link to="/enroll" className={linkClass("/enroll")}>
-										Plan Semester
-									</Link>
+									<NavLinks getClass={linkClass} />
 								</div>
 							)}
 						</div>
@@ -152,79 +209,39 @@ export default function Navbar() {
 
 						{/* Nav links */}
 						<nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
-							<Link
-								to="/dashboard"
-								className={drawerLinkClass("/dashboard")}
+							<NavLinks
+								getClass={drawerLinkClass}
+								showIcons
 								onClick={() => setMenuOpen(false)}
-							>
-								{/* Grid icon */}
-								<svg
-									className="w-4 h-4 shrink-0"
-									fill="none"
-									viewBox="0 0 24 24"
-									stroke="currentColor"
-									aria-hidden="true"
+							/>
+							{/* Logout at bottom */}
+							<div className="px-3 py-4 border-t border-indigo-500">
+								<button
+									type="button"
+									onClick={() => {
+										setMenuOpen(false);
+										handleLogout();
+									}}
+									className="flex items-center gap-3 w-full px-4 py-3 rounded-lg text-sm font-medium text-indigo-100 hover:bg-indigo-500 hover:text-white transition-colors cursor-pointer"
 								>
-									<path
-										strokeLinecap="round"
-										strokeLinejoin="round"
-										strokeWidth={2}
-										d="M3 7h18M3 12h18M3 17h18"
-									/>
-								</svg>
-								Dashboard
-							</Link>
-							<Link
-								to="/enroll"
-								className={drawerLinkClass("/enroll")}
-								onClick={() => setMenuOpen(false)}
-							>
-								{/* Calendar icon */}
-								<svg
-									className="w-4 h-4 shrink-0"
-									fill="none"
-									viewBox="0 0 24 24"
-									stroke="currentColor"
-									aria-hidden="true"
-								>
-									<path
-										strokeLinecap="round"
-										strokeLinejoin="round"
-										strokeWidth={2}
-										d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-									/>
-								</svg>
-								Plan Semester
-							</Link>
+									<svg
+										className="w-4 h-4 shrink-0"
+										fill="none"
+										viewBox="0 0 24 24"
+										stroke="currentColor"
+										aria-hidden="true"
+									>
+										<path
+											strokeLinecap="round"
+											strokeLinejoin="round"
+											strokeWidth={2}
+											d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H6a2 2 0 01-2-2V7a2 2 0 012-2h5a2 2 0 012 2v1"
+										/>
+									</svg>
+									Logout
+								</button>
+							</div>
 						</nav>
-
-						{/* Logout at bottom */}
-						<div className="px-3 py-4 border-t border-indigo-500">
-							<button
-								type="button"
-								onClick={() => {
-									setMenuOpen(false);
-									handleLogout();
-								}}
-								className="flex items-center gap-3 w-full px-4 py-3 rounded-lg text-sm font-medium text-indigo-100 hover:bg-indigo-500 hover:text-white transition-colors cursor-pointer"
-							>
-								<svg
-									className="w-4 h-4 shrink-0"
-									fill="none"
-									viewBox="0 0 24 24"
-									stroke="currentColor"
-									aria-hidden="true"
-								>
-									<path
-										strokeLinecap="round"
-										strokeLinejoin="round"
-										strokeWidth={2}
-										d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H6a2 2 0 01-2-2V7a2 2 0 012-2h5a2 2 0 012 2v1"
-									/>
-								</svg>
-								Logout
-							</button>
-						</div>
 					</section>
 				</>
 			)}
