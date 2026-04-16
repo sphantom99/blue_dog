@@ -4,8 +4,51 @@ import CalendarGrid from "../components/CalendarGrid";
 import CourseCard from "../components/CourseCard";
 import Navbar from "../components/Navbar";
 import { CalendarSkeleton, CourseListSkeleton } from "../components/Skeleton";
+import { Button } from "../components/ui";
 import { useCourseStore } from "../store/useCourseStore";
 import { useStudentStore } from "../store/useStudentStore";
+
+interface CourseFiltersProps {
+	search: string;
+	onSearch: (v: string) => void;
+	typeFilter: string;
+	onTypeFilter: (v: string) => void;
+}
+
+function CourseFilters({
+	search,
+	onSearch,
+	typeFilter,
+	onTypeFilter,
+}: CourseFiltersProps) {
+	return (
+		<div className="shrink-0 bg-surface z-10 p-4 border-b border-border-muted space-y-3">
+			<input
+				type="text"
+				placeholder="Search courses..."
+				value={search}
+				onChange={(e) => onSearch(e.target.value)}
+				className="w-full px-3 py-2 border border-border rounded-lg text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none"
+			/>
+			<div className="flex gap-2">
+				{(["all", "core", "elective"] as const).map((t) => (
+					<button
+						type="button"
+						key={t}
+						onClick={() => onTypeFilter(t)}
+						className={`px-3 py-1 rounded-full text-xs font-medium transition-colors cursor-pointer ${
+							typeFilter === t
+								? "bg-primary-600 text-white"
+								: "bg-surface-subtle text-gray-600 hover:bg-gray-200"
+						}`}
+					>
+						{t === "all" ? "All" : t.charAt(0).toUpperCase() + t.slice(1)}
+					</button>
+				))}
+			</div>
+		</div>
+	);
+}
 
 export default function EnrollPage() {
 	const { profile, studentId } = useStudentStore();
@@ -25,11 +68,8 @@ export default function EnrollPage() {
 	} = useCourseStore();
 	const navigate = useNavigate();
 
-	// Filter state
 	const [typeFilter, setTypeFilter] = useState<string>("all");
 	const [search, setSearch] = useState("");
-
-	// Mobile tab state
 	const [mobileTab, setMobileTab] = useState<"courses" | "schedule">("courses");
 
 	// Resizable split pane
@@ -54,7 +94,6 @@ export default function EnrollPage() {
 		});
 	}, [activeSemester, profile, fetchCourses]);
 
-	// Passed course IDs for prerequisite checking
 	const passedCourseIds = useMemo(() => {
 		if (!profile) return new Set<number>();
 		return new Set(
@@ -64,7 +103,6 @@ export default function EnrollPage() {
 		);
 	}, [profile]);
 
-	// Filtered courses
 	const filteredCourses = useMemo(() => {
 		return courses.filter((c) => {
 			if (typeFilter !== "all" && c.courseType !== typeFilter) return false;
@@ -111,179 +149,122 @@ export default function EnrollPage() {
 	const pendingCount = pendingEnrollments.length;
 	const totalCount = enrolledCount + pendingCount;
 
-	const handleSave = () => commitPending(studentId);
-	const handleCancel = () => cancelPending();
+	const courseList = (
+		<div className="flex-1 overflow-y-auto p-4 space-y-2">
+			{coursesLoading ? (
+				<CourseListSkeleton count={6} />
+			) : filteredCourses.length === 0 ? (
+				<p className="text-sm text-text-subtle text-center py-8">
+					No courses found
+				</p>
+			) : (
+				filteredCourses.map((course) => (
+					<CourseCard
+						key={course.id}
+						course={course}
+						passedCourseIds={passedCourseIds}
+					/>
+				))
+			)}
+		</div>
+	);
+
+	const calendar = scheduleLoading ? (
+		<CalendarSkeleton />
+	) : (
+		<CalendarGrid
+			enrolledSections={schedule?.enrolledSections ?? []}
+			pendingSections={pendingEnrollments}
+			studentId={studentId}
+		/>
+	);
 
 	return (
-		<div className="h-screen bg-gray-50 flex flex-col overflow-hidden">
+		<div className="h-screen bg-surface-muted flex flex-col overflow-hidden">
 			<Navbar />
 
 			{/* Header */}
-			<div className="bg-white border-b border-gray-200 px-4 md:px-6 py-3 flex items-center justify-between shrink-0">
+			<div className="bg-surface border-b border-border px-4 md:px-6 py-3 flex items-center justify-between shrink-0">
 				<div>
-					<h1 className="text-lg font-bold text-gray-900">Plan Semester</h1>
+					<h1 className="text-lg font-bold text-text-base">Plan Semester</h1>
 					{activeSemester && (
-						<p className="text-sm text-gray-500">
+						<p className="text-sm text-text-muted">
 							{activeSemester.name} {activeSemester.year}
 						</p>
 					)}
 				</div>
 				<div className="text-sm font-medium flex items-center gap-2">
-					<span
-						className={totalCount >= 5 ? "text-red-600" : "text-indigo-600"}
-					>
+					<span className={totalCount >= 5 ? "text-danger-600" : "text-primary-600"}>
 						{enrolledCount}
 						{pendingCount > 0 && (
-							<span className="text-blue-500">+{pendingCount}</span>
+							<span className="text-pending-500">+{pendingCount}</span>
 						)}
 						/5
 					</span>{" "}
-					<span className="text-gray-500">courses</span>
+					<span className="text-text-muted">courses</span>
 				</div>
 			</div>
 
 			{/* ── Mobile tab bar (hidden on md+) ── */}
-			<div className="md:hidden flex shrink-0 bg-white border-b border-gray-200">
-				<button
-					type="button"
-					onClick={() => setMobileTab("courses")}
-					className={`flex-1 py-2.5 text-sm font-medium transition-colors cursor-pointer ${
-						mobileTab === "courses"
-							? "border-b-2 border-indigo-600 text-indigo-600"
-							: "text-gray-500 hover:text-gray-700"
-					}`}
-				>
-					Courses
-				</button>
-				<button
-					type="button"
-					onClick={() => setMobileTab("schedule")}
-					className={`flex-1 py-2.5 text-sm font-medium transition-colors cursor-pointer ${
-						mobileTab === "schedule"
-							? "border-b-2 border-indigo-600 text-indigo-600"
-							: "text-gray-500 hover:text-gray-700"
-					}`}
-				>
-					Schedule
-				</button>
+			<div className="md:hidden flex shrink-0 bg-surface border-b border-border">
+				{(["courses", "schedule"] as const).map((tab) => (
+					<button
+						key={tab}
+						type="button"
+						onClick={() => setMobileTab(tab)}
+						className={`flex-1 py-2.5 text-sm font-medium transition-colors cursor-pointer capitalize ${
+							mobileTab === tab
+								? "border-b-2 border-primary-600 text-primary-600"
+								: "text-text-muted hover:text-gray-700"
+						}`}
+					>
+						{tab}
+					</button>
+				))}
 			</div>
 
 			{/* ── Mobile: single-pane view ── */}
 			<div className="md:hidden flex-1 overflow-hidden min-h-0 flex flex-col">
-				{/* Mobile: Course browser — always mounted, hidden via CSS when not active */}
-				<div className={`flex flex-col flex-1 overflow-hidden bg-white ${mobileTab === "courses" ? "" : "hidden"}`}>
-					<div className="shrink-0 bg-white z-10 p-4 border-b border-gray-100 space-y-3">
-						<input
-							type="text"
-							placeholder="Search courses..."
-							value={search}
-							onChange={(e) => setSearch(e.target.value)}
-							className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none"
-						/>
-						<div className="flex gap-2">
-							{["all", "core", "elective"].map((t) => (
-								<button
-									type="button"
-									key={t}
-									onClick={() => setTypeFilter(t)}
-									className={`px-3 py-1 rounded-full text-xs font-medium transition-colors cursor-pointer ${
-										typeFilter === t
-											? "bg-indigo-600 text-white"
-											: "bg-gray-100 text-gray-600 hover:bg-gray-200"
-									}`}
-								>
-									{t === "all" ? "All" : t.charAt(0).toUpperCase() + t.slice(1)}
-								</button>
-							))}
-						</div>
-					</div>
-					<div className="flex-1 overflow-y-auto p-4 space-y-2">
-						{coursesLoading ? (
-							<CourseListSkeleton count={6} />
-						) : filteredCourses.length === 0 ? (
-							<p className="text-sm text-gray-400 text-center py-8">No courses found</p>
-						) : (
-							filteredCourses.map((course) => (
-								<CourseCard
-									key={course.id}
-									course={course}
-									passedCourseIds={passedCourseIds}
-								/>
-							))
-						)}
-					</div>
+				<div
+					className={`flex flex-col flex-1 overflow-hidden bg-surface ${mobileTab === "courses" ? "" : "hidden"}`}
+				>
+					<CourseFilters
+						search={search}
+						onSearch={setSearch}
+						typeFilter={typeFilter}
+						onTypeFilter={setTypeFilter}
+					/>
+					{courseList}
 				</div>
 
-				{/* Mobile: Calendar — always mounted, hidden via CSS when not active */}
-				<div className={`flex-1 overflow-y-auto p-4 ${mobileTab === "schedule" ? "" : "hidden"}`}>
-					{scheduleLoading ? (
-						<CalendarSkeleton />
-					) : (
-						<CalendarGrid
-							enrolledSections={schedule?.enrolledSections ?? []}
-							pendingSections={pendingEnrollments}
-							studentId={studentId}
-						/>
-					)}
+				<div
+					className={`flex-1 overflow-y-auto p-4 ${mobileTab === "schedule" ? "" : "hidden"}`}
+				>
+					{calendar}
 				</div>
 			</div>
 
 			{/* ── Desktop: resizable split pane (hidden below md) ── */}
-			<div ref={containerRef} className="hidden md:flex flex-1 overflow-hidden min-h-0">
+			<div
+				ref={containerRef}
+				className="hidden md:flex flex-1 overflow-hidden min-h-0"
+			>
 				{/* Left: Course Browser */}
 				<div
-					className="flex flex-col border-r border-gray-200 bg-white overflow-hidden"
+					className="flex flex-col border-r border-border bg-surface overflow-hidden"
 					style={{ width: `${splitPct}%` }}
 				>
-					{/* Filters — sticky */}
-					<div className="shrink-0 bg-white z-10 p-4 border-b border-gray-100 space-y-3">
-						<input
-							type="text"
-							placeholder="Search courses..."
-							value={search}
-							onChange={(e) => setSearch(e.target.value)}
-							className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none"
-						/>
-						<div className="flex gap-2">
-							{["all", "core", "elective"].map((t) => (
-								<button
-									type="button"
-									key={t}
-									onClick={() => setTypeFilter(t)}
-									className={`px-3 py-1 rounded-full text-xs font-medium transition-colors cursor-pointer ${
-										typeFilter === t
-											? "bg-indigo-600 text-white"
-											: "bg-gray-100 text-gray-600 hover:bg-gray-200"
-									}`}
-								>
-									{t === "all" ? "All" : t.charAt(0).toUpperCase() + t.slice(1)}
-								</button>
-							))}
-						</div>
-					</div>
-
-					{/* Scrollable course list */}
-					<div className="flex-1 overflow-y-auto p-4 space-y-2">
-						{coursesLoading ? (
-							<CourseListSkeleton count={6} />
-						) : filteredCourses.length === 0 ? (
-							<p className="text-sm text-gray-400 text-center py-8">
-								No courses found
-							</p>
-						) : (
-							filteredCourses.map((course) => (
-								<CourseCard
-									key={course.id}
-									course={course}
-									passedCourseIds={passedCourseIds}
-								/>
-							))
-						)}
-					</div>
+					<CourseFilters
+						search={search}
+						onSearch={setSearch}
+						typeFilter={typeFilter}
+						onTypeFilter={setTypeFilter}
+					/>
+					{courseList}
 				</div>
 
 				{/* Resizable divider */}
-				{/** biome-ignore lint/a11y/useSemanticElements: we need this because its draggable */}
+				{/** biome-ignore lint/a11y/useSemanticElements: draggable divider */}
 				<div
 					role="separator"
 					aria-valuenow={splitPct}
@@ -296,7 +277,7 @@ export default function EnrollPage() {
 						if (e.key === "ArrowLeft") setSplitPct((p) => Math.max(25, p - 2));
 						if (e.key === "ArrowRight") setSplitPct((p) => Math.min(70, p + 2));
 					}}
-					className="w-1.5 bg-gray-200 hover:bg-indigo-400 cursor-col-resize shrink-0 transition-colors"
+					className="w-1.5 bg-border hover:bg-primary-400 cursor-col-resize shrink-0 transition-colors"
 				/>
 
 				{/* Right: Calendar */}
@@ -304,40 +285,28 @@ export default function EnrollPage() {
 					className="overflow-y-auto p-4"
 					style={{ width: `${100 - splitPct}%` }}
 				>
-					{scheduleLoading ? (
-						<CalendarSkeleton />
-					) : (
-						<CalendarGrid
-							enrolledSections={schedule?.enrolledSections ?? []}
-							pendingSections={pendingEnrollments}
-							studentId={studentId}
-						/>
-					)}
+					{calendar}
 				</div>
 			</div>
 
-			{/* FAB — appears when there are pending enrollments */}
 			{pendingCount > 0 && (
 				<div className="fixed bottom-6 right-6 flex items-center gap-3 z-50">
-					<button
-						type="button"
-						onClick={handleCancel}
+					<Button
+						variant="secondary"
+						onClick={cancelPending}
 						disabled={pendingLoading}
-						className="px-4 py-2.5 rounded-full text-sm font-semibold bg-white text-gray-700 border border-gray-300 shadow-lg hover:bg-gray-50 disabled:opacity-50 transition-colors cursor-pointer"
+						className="rounded-full shadow-lg font-semibold"
 					>
 						Cancel
-					</button>
-					<button
-						type="button"
-						onClick={handleSave}
-						disabled={pendingLoading}
-						className="px-5 py-2.5 rounded-full text-sm font-semibold bg-indigo-600 text-white shadow-lg hover:bg-indigo-700 disabled:opacity-50 transition-colors cursor-pointer flex items-center gap-2"
+					</Button>
+					<Button
+						variant="primary"
+						onClick={() => commitPending(studentId)}
+						loading={pendingLoading}
+						className="rounded-full shadow-lg font-semibold"
 					>
-						{pendingLoading ? (
-							<span className="inline-block w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
-						) : null}
 						Save {pendingCount} course{pendingCount !== 1 ? "s" : ""}
-					</button>
+					</Button>
 				</div>
 			)}
 		</div>

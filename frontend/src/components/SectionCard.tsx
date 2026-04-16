@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import { DAY_NAMES } from "../lib/dayNames";
 import { useCourseStore } from "../store/useCourseStore";
 import type { CourseSection } from "../types";
+import { Button } from "./ui";
 
 interface SectionCardProps {
 	section: CourseSection;
@@ -63,81 +64,77 @@ export default function SectionCard({
 		})
 		.join(", ");
 
+	// Determine button appearance
 	let buttonLabel: string;
-	let buttonStyle: string;
+	let buttonVariant: "ghost" | "primary" | "danger";
 	let buttonDisabled = false;
 
 	if (courseAlreadyEnrolled) {
 		buttonLabel = "Enrolled";
-		buttonStyle =
-			"bg-green-100 text-green-700 border border-green-300 cursor-not-allowed";
+		buttonVariant = "ghost";
 		buttonDisabled = true;
 	} else if (isFull && !isPending) {
 		buttonLabel = "Full";
-		buttonStyle =
-			"bg-gray-100 text-gray-400 border border-gray-200 cursor-not-allowed";
+		buttonVariant = "ghost";
 		buttonDisabled = true;
 	} else if (isPending && isConflicting) {
 		buttonLabel = "⚠ Pending ✕";
-		buttonStyle =
-			"bg-red-100 text-red-700 hover:bg-red-200 border border-red-300";
+		buttonVariant = "danger";
 	} else if (isPending) {
 		buttonLabel = "Pending ✕";
-		buttonStyle =
-			"bg-blue-100 text-blue-700 hover:bg-blue-200 border border-blue-300";
+		buttonVariant = "danger";
 	} else {
 		buttonLabel = "Add";
-		buttonStyle = "bg-indigo-600 text-white hover:bg-indigo-700";
+		buttonVariant = "primary";
 	}
 
-	// Border style: red when conflicting, normal otherwise
+	// Card border / background based on conflict state
 	const cardBorder = isConflicting
-		? "border-red-300 bg-red-50"
+		? "border-danger-300 bg-danger-50"
 		: isFull || courseAlreadyEnrolled
 			? "border-gray-100 opacity-70"
 			: wouldConflict
-				? "border-amber-300 bg-amber-50"
-				: "border-gray-200";
+				? "border-warning-100 bg-warning-50"
+				: "border-border";
 
 	return (
 		<div
-			className={`bg-white rounded-lg border p-3 flex flex-col gap-2 ${cardBorder}`}
+			className={`bg-surface rounded-lg border p-3 flex flex-col gap-2 ${cardBorder}`}
 		>
 			<div className="flex items-center justify-between gap-3">
 				<div className="min-w-0 flex-1">
 					<div className="flex items-center gap-2">
-						<span className="text-sm font-medium text-gray-900">
+						<span className="text-sm font-medium text-text-base">
 							Section {section.sectionLabel}
 						</span>
-						<span className="text-xs text-gray-400">
+						<span className="text-xs text-text-subtle">
 							{section.teacherFirstName} {section.teacherLastName}
 						</span>
 					</div>
-					<p className="text-xs text-gray-500 mt-0.5">{meetingText}</p>
+					<p className="text-xs text-text-muted mt-0.5">{meetingText}</p>
 					<p
-						className={`text-xs mt-0.5 ${isFull ? "text-red-500 font-medium" : "text-gray-400"}`}
+						className={`text-xs mt-0.5 ${isFull ? "text-danger-500 font-medium" : "text-text-subtle"}`}
 					>
 						{section.enrolledCount}/{section.capacity} enrolled
 					</p>
 				</div>
-				<button
-					type="button"
-					onClick={handleToggle}
+				<Button
+					size="sm"
+					variant={buttonVariant}
 					disabled={buttonDisabled}
-					className={`shrink-0 px-3 py-1.5 text-xs font-medium rounded-lg transition-colors cursor-pointer disabled:cursor-not-allowed ${buttonStyle}`}
+					onClick={handleToggle}
+					className="shrink-0 rounded-lg"
 				>
 					{buttonLabel}
-				</button>
+				</Button>
 			</div>
-			{/* Conflict warning banners */}
 			{isConflicting && (
-				<p className="text-xs text-red-600 font-medium flex items-center gap-1">
-					<span aria-hidden="true">⚠</span> Time conflict with another added
-					course
+				<p className="text-xs text-danger-600 font-medium flex items-center gap-1">
+					<span aria-hidden="true">⚠</span> Time conflict with another added course
 				</p>
 			)}
 			{wouldConflict && (
-				<p className="text-xs text-amber-600 font-medium flex items-center gap-1">
+				<p className="text-xs text-warning-600 font-medium flex items-center gap-1">
 					<span aria-hidden="true">⚠</span> Overlaps with your current schedule
 				</p>
 			)}

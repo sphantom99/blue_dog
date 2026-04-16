@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import ProgressBar from "../components/ProgressBar";
 import { CardSkeleton, TableSkeleton } from "../components/Skeleton";
+import { Card } from "../components/ui";
 import { DAY_NAMES } from "../lib/dayNames";
 import { SUBJECT_COLORS } from "../lib/specializationColors";
 import { useCourseStore } from "../store/useCourseStore";
@@ -28,7 +29,7 @@ export default function DashboardPage() {
 
 	if (loading || !profile) {
 		return (
-			<div className="min-h-screen bg-gray-50">
+			<div className="min-h-screen bg-surface-muted">
 				<Navbar />
 				<main className="max-w-5xl mx-auto px-4 py-8 space-y-8">
 					<CardSkeleton />
@@ -45,50 +46,46 @@ export default function DashboardPage() {
 			: 0;
 
 	return (
-		<div className="min-h-screen bg-gray-50">
+		<div className="min-h-screen bg-surface-muted">
 			<Navbar />
 			<main className="max-w-5xl mx-auto px-4 py-8 space-y-8">
 				{/* Student Info Card */}
-				<div className="bg-white rounded-xl shadow p-6 flex flex-wrap items-center justify-between gap-6">
+				<Card className="flex flex-wrap items-center justify-between gap-6">
 					<div>
-						<h2 className="text-2xl font-bold text-gray-900">
+						<h2 className="text-2xl font-bold text-text-base">
 							{profile.firstName} {profile.lastName}
 						</h2>
-						<p className="text-gray-500 mt-1">
+						<p className="text-text-muted mt-1">
 							Grade {profile.gradeLevel} · {profile.email}
 						</p>
 					</div>
 					<div className="flex gap-6 text-center">
-						<div className="bg-indigo-50 rounded-lg px-5 py-3">
-							<p className="text-2xl font-bold text-indigo-600">
+						<div className="bg-primary-50 rounded-lg px-5 py-3">
+							<p className="text-2xl font-bold text-primary-600">
 								{profile.gpa.toFixed(2)}
 							</p>
-							<p className="text-xs text-gray-500 uppercase tracking-wide">
-								GPA
-							</p>
+							<p className="text-xs text-text-muted uppercase tracking-wide">GPA</p>
 						</div>
-						<div className="bg-green-50 rounded-lg px-5 py-3">
-							<p className="text-2xl font-bold text-green-600">
+						<div className="bg-success-50 rounded-lg px-5 py-3">
+							<p className="text-2xl font-bold text-success-600">
 								{profile.creditsPassed}
 							</p>
-							<p className="text-xs text-gray-500 uppercase tracking-wide">
+							<p className="text-xs text-text-muted uppercase tracking-wide">
 								Credits Earned
 							</p>
 						</div>
-						<div className="bg-amber-50 rounded-lg px-5 py-3">
-							<p className="text-2xl font-bold text-amber-600">
-								{graduationPct}%
-							</p>
-							<p className="text-xs text-gray-500 uppercase tracking-wide">
+						<div className="bg-warning-50 rounded-lg px-5 py-3">
+							<p className="text-2xl font-bold text-warning-600">{graduationPct}%</p>
+							<p className="text-xs text-text-muted uppercase tracking-wide">
 								Graduation
 							</p>
 						</div>
 					</div>
-				</div>
+				</Card>
 
-				{/* Progress Bar */}
-				<div className="bg-white rounded-xl shadow p-6">
-					<h3 className="text-lg font-semibold text-gray-900 mb-3">
+				{/* Graduation Progress */}
+				<Card>
+					<h3 className="text-lg font-semibold text-text-base mb-3">
 						Graduation Progress
 					</h3>
 					<ProgressBar
@@ -96,14 +93,15 @@ export default function DashboardPage() {
 						max={profile.totalCreditsRequired}
 						label={`${profile.creditsPassed} / ${profile.totalCreditsRequired} credits`}
 					/>
-				</div>
+				</Card>
 
-				<div className="bg-white rounded-xl shadow p-6">
-					<h3 className="text-lg font-semibold text-gray-900 mb-3">
+				{/* Current Subjects */}
+				<Card>
+					<h3 className="text-lg font-semibold text-text-base mb-3">
 						Current Subjects
 					</h3>
 					{schedule?.enrolledSections.length === 0 ? (
-						<p className="text-gray-500">
+						<p className="text-text-muted">
 							Not enrolled in any courses this semester.
 						</p>
 					) : (
@@ -111,10 +109,10 @@ export default function DashboardPage() {
 							{schedule?.enrolledSections.map((section) => (
 								<li
 									key={section.id}
-									className={`rounded-lg px-2 py-1 ${SUBJECT_COLORS[section.specialization]?.bg || "bg-gray-100"} ${SUBJECT_COLORS[section.specialization]?.text || "text-gray-900"}`}
+									className={`rounded-lg px-2 py-1 ${SUBJECT_COLORS[section.specialization]?.bg || "bg-gray-100"} ${SUBJECT_COLORS[section.specialization]?.text || "text-text-base"}`}
 								>
 									{section.courseCode} - {section.courseName}
-									<span className="text-sm text-gray-500">
+									<span className="text-sm text-text-muted">
 										{" — "}
 										{section.meetings
 											.map((m) => {
@@ -128,64 +126,62 @@ export default function DashboardPage() {
 							))}
 						</ul>
 					)}
-				</div>
+				</Card>
 
 				{/* Course History */}
-				<div className="bg-white rounded-xl shadow overflow-hidden">
-					<div className="p-6 border-b border-gray-200 flex items-center justify-between">
-						<h3 className="text-lg font-semibold text-gray-900">
+				<Card noPadding>
+					<div className="p-6 border-b border-border flex items-center justify-between">
+						<h3 className="text-lg font-semibold text-text-base">
 							Course History
 						</h3>
 						<button
 							type="button"
 							onClick={() => navigate("/enroll")}
-							className="px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors cursor-pointer"
+							className="px-4 py-2 bg-primary-600 text-white text-sm font-medium rounded-lg hover:bg-primary-700 transition-colors cursor-pointer"
 						>
 							Plan Semester
 						</button>
 					</div>
 					{profile.courseHistory.length === 0 ? (
-						<div className="p-6 text-center text-gray-500">
+						<div className="p-6 text-center text-text-muted">
 							No course history yet. Start planning your first semester!
 						</div>
 					) : (
 						<table className="w-full">
-							<thead className="bg-gray-50">
+							<thead className="bg-surface-muted">
 								<tr>
-									<th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
+									<th className="text-left px-6 py-3 text-xs font-medium text-text-muted uppercase tracking-wider">
 										Course
 									</th>
-									<th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
+									<th className="text-left px-6 py-3 text-xs font-medium text-text-muted uppercase tracking-wider">
 										Semester
 									</th>
-									<th className="text-center px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
+									<th className="text-center px-6 py-3 text-xs font-medium text-text-muted uppercase tracking-wider">
 										Credits
 									</th>
-									<th className="text-center px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
+									<th className="text-center px-6 py-3 text-xs font-medium text-text-muted uppercase tracking-wider">
 										Status
 									</th>
 								</tr>
 							</thead>
-							<tbody className="divide-y divide-gray-200">
+							<tbody className="divide-y divide-border">
 								{profile.courseHistory
 									.sort((a, b) => {
 										const semA = `${a.semesterYear}-${a.semesterName}`;
 										const semB = `${b.semesterYear}-${b.semesterName}`;
-										if (semA !== semB) {
-											return semB.localeCompare(semA);
-										}
+										if (semA !== semB) return semB.localeCompare(semA);
 										return a.courseCode.localeCompare(b.courseCode);
 									})
 									.map((ch) => (
 										<tr
 											key={`${ch.courseId}-${ch.semesterYear}`}
-											className="hover:bg-gray-50"
+											className="hover:bg-surface-muted"
 										>
 											<td className="px-6 py-4">
-												<p className="font-medium text-gray-900">
+												<p className="font-medium text-text-base">
 													{ch.courseCode}
 												</p>
-												<p className="text-sm text-gray-500">{ch.courseName}</p>
+												<p className="text-sm text-text-muted">{ch.courseName}</p>
 											</td>
 											<td className="px-6 py-4 text-sm text-gray-600">
 												{ch.semesterName} {ch.semesterYear}
@@ -197,8 +193,8 @@ export default function DashboardPage() {
 												<span
 													className={`inline-flex px-2.5 py-0.5 rounded-full text-xs font-medium ${
 														ch.status === "passed"
-															? "bg-green-100 text-green-800"
-															: "bg-red-100 text-red-800"
+															? "bg-success-100 text-success-800"
+															: "bg-danger-100 text-danger-800"
 													}`}
 												>
 													{ch.status}
@@ -209,7 +205,7 @@ export default function DashboardPage() {
 							</tbody>
 						</table>
 					)}
-				</div>
+				</Card>
 			</main>
 		</div>
 	);

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useCourseStore } from "../store/useCourseStore";
 import type { Course } from "../types";
 import SectionCard from "./SectionCard";
+import { Badge } from "./ui";
 
 interface CourseCardProps {
 	course: Course;
@@ -28,18 +29,14 @@ export default function CourseCard({
 		course.prerequisiteId !== null &&
 		!passedCourseIds.has(course.prerequisiteId);
 
-	// Already enrolled in this course (any section)
 	const alreadyEnrolled = !!schedule?.enrolledSections.some(
 		(s) => s.courseId === course.id,
 	);
 
-	// Any section of this course staged for enrollment
 	const hasPending = pendingEnrollments.some((s) => s.courseId === course.id);
 
 	const handleExpand = () => {
-		if (!expanded) {
-			fetchSections(course.id);
-		}
+		if (!expanded) fetchSections(course.id);
 		setExpanded(!expanded);
 	};
 
@@ -48,7 +45,7 @@ export default function CourseCard({
 			className={`border rounded-lg overflow-hidden transition-colors ${
 				hasUnmetPrereq
 					? "border-gray-200 bg-gray-50 opacity-60"
-					: "border-gray-200 bg-white hover:border-indigo-300"
+					: "border-gray-200 bg-white hover:border-primary-300"
 			}`}
 		>
 			{/* Accordion header — always clickable, even when grayed out */}
@@ -59,53 +56,47 @@ export default function CourseCard({
 			>
 				<div className="min-w-0 flex-1">
 					<div className="flex items-center gap-2 flex-wrap">
-						<span className="font-mono text-sm font-semibold text-indigo-600">
+						<span className="font-mono text-sm font-semibold text-primary-600">
 							{course.code}
 						</span>
-						<span className="text-sm text-gray-400">{course.credits} cr</span>
+						<span className="text-sm text-text-subtle">{course.credits} cr</span>
 						{course.courseType === "core" && (
-							<span className="text-[10px] bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded font-medium uppercase">
-								Core
-							</span>
+							<Badge variant="warning" className="uppercase">Core</Badge>
 						)}
 						{alreadyEnrolled && (
-							<span className="text-[10px] bg-green-100 text-green-700 px-1.5 py-0.5 rounded font-medium">
-								Enrolled
-							</span>
+							<Badge variant="success">Enrolled</Badge>
 						)}
 						{hasPending && !alreadyEnrolled && (
-							<span className="text-[10px] bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded font-medium">
-								Pending
-							</span>
+							<Badge variant="pending">Pending</Badge>
 						)}
 					</div>
-					<p className="text-sm text-gray-900 mt-0.5 truncate">{course.name}</p>
+					<p className="text-sm text-text-base mt-0.5 truncate">{course.name}</p>
 					{hasUnmetPrereq && (
-						<p className="text-xs text-red-500 mt-1">
+						<p className="text-xs text-danger-500 mt-1">
 							Requires: {course.prerequisiteCode}
 						</p>
 					)}
 				</div>
-				<span className="text-gray-400 ml-2 text-lg shrink-0">
+				<span className="text-text-subtle ml-2 text-lg shrink-0">
 					{expanded ? "▾" : "▸"}
 				</span>
 			</button>
 
 			{expanded && (
-				<div className="border-t border-gray-100 bg-gray-50 p-3 space-y-2">
+				<div className="border-t border-border-muted bg-surface-muted p-3 space-y-2">
 					{hasUnmetPrereq && (
-						<p className="text-xs text-red-500 bg-red-50 border border-red-200 rounded px-3 py-2">
+						<p className="text-xs text-danger-500 bg-danger-50 border border-danger-200 rounded px-3 py-2">
 							Prerequisite not met: complete{" "}
 							<span className="font-semibold">{course.prerequisiteCode}</span>{" "}
 							first
 						</p>
 					)}
 					{loading && sections.length === 0 ? (
-						<p className="text-sm text-gray-400 text-center py-2">
+						<p className="text-sm text-text-subtle text-center py-2">
 							Loading sections...
 						</p>
 					) : sections.length === 0 ? (
-						<p className="text-sm text-gray-400 text-center py-2">
+						<p className="text-sm text-text-subtle text-center py-2">
 							No sections available
 						</p>
 					) : (

@@ -1,1 +1,68 @@
 @import "tailwindcss";
+
+/**
+ * Maplewood design tokens
+ *
+ * Tailwind v4 uses CSS-first configuration via @theme.
+ * Change a token here and every utility that references it updates automatically.
+ * Semantic aliases (primary, success, …) let us swap the whole brand palette
+ * by editing only this file.
+ */
+@theme {
+  /* ── Brand / primary ────────────────────────────────────────────────────── */
+  --color-primary-50:  var(--color-indigo-50);
+  --color-primary-100: var(--color-indigo-100);
+  --color-primary-200: var(--color-indigo-200);
+  --color-primary-300: var(--color-indigo-300);
+  --color-primary-400: var(--color-indigo-400);
+  --color-primary-500: var(--color-indigo-500);
+  --color-primary-600: var(--color-indigo-600);
+  --color-primary-700: var(--color-indigo-700);
+  --color-primary-800: var(--color-indigo-800);
+  --color-primary-900: var(--color-indigo-900);
+
+  /* ── Semantic status colors ─────────────────────────────────────────────── */
+  --color-success-50:  var(--color-green-50);
+  --color-success-100: var(--color-green-100);
+  --color-success-600: var(--color-green-600);
+  --color-success-700: var(--color-green-700);
+  --color-success-800: var(--color-green-800);
+  --color-success-900: var(--color-green-900);
+
+  --color-danger-50:   var(--color-red-50);
+  --color-danger-100:  var(--color-red-100);
+  --color-danger-200:  var(--color-red-200);
+  --color-danger-400:  var(--color-red-400);
+  --color-danger-500:  var(--color-red-500);
+  --color-danger-600:  var(--color-red-600);
+  --color-danger-700:  var(--color-red-700);
+  --color-danger-800:  var(--color-red-800);
+  --color-danger-900:  var(--color-red-900);
+
+  --color-warning-50:  var(--color-amber-50);
+  --color-warning-100: var(--color-amber-100);
+  --color-warning-600: var(--color-amber-600);
+  --color-warning-700: var(--color-amber-700);
+  --color-warning-800: var(--color-amber-800);
+
+  --color-pending-50:  var(--color-blue-50);
+  --color-pending-100: var(--color-blue-100);
+  --color-pending-300: var(--color-blue-300);
+  --color-pending-400: var(--color-blue-400);
+  --color-pending-500: var(--color-blue-500);
+  --color-pending-600: var(--color-blue-600);
+  --color-pending-700: var(--color-blue-700);
+  --color-pending-800: var(--color-blue-800);
+
+  /* ── Surface / neutral ──────────────────────────────────────────────────── */
+  --color-surface:         #ffffff;
+  --color-surface-muted:   var(--color-gray-50);
+  --color-surface-subtle:  var(--color-gray-100);
+  --color-border:          var(--color-gray-200);
+  --color-border-muted:    var(--color-gray-100);
+
+  /* ── Typography ─────────────────────────────────────────────────────────── */
+  --color-text-base:    var(--color-gray-900);
+  --color-text-muted:   var(--color-gray-500);
+  --color-text-subtle:  var(--color-gray-400);
+}

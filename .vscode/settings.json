@@ -2,5 +2,7 @@
 	"java.configuration.updateBuildConfiguration": "automatic",
 	"java.project.sourcePaths": [],
 	"java.project.referencedLibraries": [],
-	"maven.executable.path": "mvn"
+	"maven.executable.path": "mvn",
+	"css.validate": false,
+	"scss.validate": false
 }
