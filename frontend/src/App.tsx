@@ -1,8 +1,11 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import ToastContainer from "./components/Toast";
-import DashboardPage from "./pages/Dashboard/DashboardPage";
-import EnrollPage from "./pages/EnrollPage";
-import LoginPage from "./pages/LoginPage";
+import { lazy } from "react";
+const LoginPage = lazy(() => import("./pages/LoginPage"));
+const EnrollPage = lazy(() => import("./pages/EnrollPage"));
+const DashboardPage = lazy(() => import("./pages/Dashboard/DashboardPage"));
+
+
 
 function App() {
 	return (

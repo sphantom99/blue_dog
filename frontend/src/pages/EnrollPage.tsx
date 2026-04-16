@@ -36,11 +36,10 @@ function CourseFilters({
 						type="button"
 						key={t}
 						onClick={() => onTypeFilter(t)}
-						className={`px-3 py-1 rounded-full text-xs font-medium transition-colors cursor-pointer ${
-							typeFilter === t
+						className={`px-3 py-1 rounded-full text-xs font-medium transition-colors cursor-pointer ${typeFilter === t
 								? "bg-primary-600 text-white"
 								: "bg-surface-subtle text-gray-600 hover:bg-gray-200"
-						}`}
+							}`}
 					>
 						{t === "all" ? "All" : t.charAt(0).toUpperCase() + t.slice(1)}
 					</button>
@@ -212,11 +211,10 @@ export default function EnrollPage() {
 						key={tab}
 						type="button"
 						onClick={() => setMobileTab(tab)}
-						className={`flex-1 py-2.5 text-sm font-medium transition-colors cursor-pointer capitalize ${
-							mobileTab === tab
+						className={`flex-1 py-2.5 text-sm font-medium transition-colors cursor-pointer capitalize ${mobileTab === tab
 								? "border-b-2 border-primary-600 text-primary-600"
 								: "text-text-muted hover:text-gray-700"
-						}`}
+							}`}
 					>
 						{tab}
 					</button>
