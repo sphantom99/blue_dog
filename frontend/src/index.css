@@ -2,11 +2,6 @@
 
 /**
  * Maplewood design tokens
- *
- * Tailwind v4 uses CSS-first configuration via @theme.
- * Change a token here and every utility that references it updates automatically.
- * Semantic aliases (primary, success, …) let us swap the whole brand palette
- * by editing only this file.
  */
 @theme {
   /* ── Brand / primary ────────────────────────────────────────────────────── */
@@ -65,4 +60,12 @@
   --color-text-base:    var(--color-gray-900);
   --color-text-muted:   var(--color-gray-500);
   --color-text-subtle:  var(--color-gray-400);
+
+  /* ── Animations ─────────────────────────────────────────────────────────── */
+  --animate-slide-in-from-right: slide-in-from-right 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes slide-in-from-right {
+  from { transform: translateX(120%); opacity: 0; }
+  to   { transform: translateX(0);    opacity: 1; }
 }

@@ -57,11 +57,9 @@ async function goToEnroll(page: Page) {
  * 4. Clear the search
  */
 async function addSection(page: Page, courseCode: string, sectionLabel = "A") {
-	// Desktop search input — inside the hidden md:flex split pane
 	const search = page.locator(".md\\:flex input[placeholder='Search courses...']");
 	await search.fill(courseCode);
 
-	// Accordion button — the button inside the desktop pane that contains the code text
 	const accordion = page
 		.locator(".md\\:flex")
 		.getByRole("button")
@@ -70,9 +68,6 @@ async function addSection(page: Page, courseCode: string, sectionLabel = "A") {
 	await accordion.waitFor({ state: "visible" });
 	await accordion.click();
 
-	// After the accordion expands, Add buttons appear.
-	// Filtering to one course means the only Add buttons belong to that course.
-	// Section labels are ordered A, B, C… so A=index 0, B=index 1.
 	const sectionIndex = Math.max(0, sectionLabel.toUpperCase().charCodeAt(0) - 65);
 	const addBtn = page
 		.locator(".md\\:flex")
@@ -93,20 +88,6 @@ async function saveEnrollments(page: Page) {
 	// Toast element has shadow-lg and border and text-sm classes
 	await page.waitForSelector("div.shadow-lg.border.text-sm", { timeout: 10_000 });
 }
-
-// ── Test data ──────────────────────────────────────────────────────────────
-//
-// Student   2 — Patricia Baker,  grade  9, no history         (conflict + max-5)
-// Student 101 — Carol Smith,     grade 10, no ENG102 pass     (prereq violation)
-// Student 301 — Joshua Phillips, grade 12, passed ENG102      (valid enrollment)
-//
-// Five conflict-free section IDs for the max-5 test (verified in sqlite3):
-//   id  code      label  timeslot-ids
-//    1  ENG101    A      {1,8,14,23,30}
-//   15  SOC101    B      {4,12,22,29}
-//   19  PHOT101   A      {6,9,18}
-//   21  MUS101    B      {10,17,19}
-//   36  GERM101   A      {5,11,13,26}
 
 const PATRICIA = 2;    // grade  9, no history
 const CAROL    = 101;  // grade 10, has passed ENG101 but NOT ENG102
@@ -207,7 +188,6 @@ test.describe("Enrollment scenarios", () => {
 		await addSection(page, "ART101", "A");
 		await saveEnrollments(page);
 
-		// Backend returns MAX_COURSES_EXCEEDED → error toast
 		await expect(page.locator("div.bg-red-50").first()).toBeVisible({ timeout: 8_000 });
 	});
 });
