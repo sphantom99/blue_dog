@@ -2,7 +2,7 @@
 
 A full-stack course planning application for Maplewood High School. Students can log in, browse the course catalog, build their semester schedule with a live calendar preview, and commit enrollments — all with real-time validation of prerequisites, time conflicts, capacity limits, and grade-level requirements.
 
-![Database Schema](maplewood_school_diagram.png)
+![Database Schema](maplewood_school_er_diagram.png)
 
 ---
 
@@ -30,6 +30,11 @@ A full-stack course planning application for Maplewood High School. Students can
     - [End-to-End Tests](#end-to-end-tests)
   - [Database](#database)
   - [Potential Future Improvements](#potential-future-improvements)
+    - [1. Authentication \& Authorization (JWT + HttpOnly Cookies)](#1-authentication--authorization-jwt--httponly-cookies)
+    - [2. Course Search at Scale (Database Indexing → Elasticsearch)](#2-course-search-at-scale-database-indexing--elasticsearch)
+    - [3. Caching Layer (Redis)](#3-caching-layer-redis)
+    - [4. Enrollment Queue (RabbitMQ / Message Broker)](#4-enrollment-queue-rabbitmq--message-broker)
+    - [5. High-Level Design Diagram](#5-high-level-design-diagram)
 
 ---
 
