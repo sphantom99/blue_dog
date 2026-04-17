@@ -32,6 +32,7 @@ export const useStudentStore = create<StudentState>((set) => ({
             const graduationPct = data.totalCreditsRequired > 0
                 ? Math.round((data.creditsPassed / data.totalCreditsRequired) * 100)
                 : 0;
+
             set({ profile: data, studentId: id, loading: false, graduationPct });
         } catch {
             set({ error: "Failed to load student profile", loading: false });

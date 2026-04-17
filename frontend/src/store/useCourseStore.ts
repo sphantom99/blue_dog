@@ -177,7 +177,7 @@ export const useCourseStore = create<CourseState>((set, get) => ({
                 },
             }));
         } catch {
-            // ignore
+            console.error("Failed to fetch sections for semester", semesterId);
         }
     },
 
