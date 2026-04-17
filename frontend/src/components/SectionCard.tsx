@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { DAY_NAMES } from "../lib/dayNames";
+import { formatMeetingTimes } from "../lib/formatMeetingTime";
 import { useCourseStore } from "../store/useCourseStore";
 import type { CourseSection } from "../types";
 import { Button } from "./ui";
@@ -56,13 +56,7 @@ export default function SectionCard({
 		}
 	};
 
-	const meetingText = section.meetings
-		.map((m) => {
-			const day = DAY_NAMES[m.timeslot.dayOfWeek] || "?";
-			const start = m.timeslot.startTime.slice(0, 5);
-			return `${day} ${start}`;
-		})
-		.join(", ");
+	const meetingText = formatMeetingTimes(section.meetings);
 
 	// Determine button appearance
 	let buttonLabel: string;

@@ -1,5 +1,5 @@
 import { Card } from '../../components/ui';
-import { DAY_NAMES } from '../../lib/dayNames';
+import { formatMeetingTimes } from '../../lib/formatMeetingTime';
 import { SUBJECT_COLORS } from '../../lib/specializationColors';
 import { useCourseStore } from '../../store/useCourseStore';
 
@@ -24,13 +24,7 @@ const CurrentSubjects = () => {
                             {section.courseCode} - {section.courseName}
                             <span className="text-sm text-text-muted">
                                 {" — "}
-                                {section.meetings
-                                    .map((m) => {
-                                        const day = DAY_NAMES[m.timeslot.dayOfWeek] || "?";
-                                        const start = m.timeslot.startTime.slice(0, 5);
-                                        return `${day} ${start}`;
-                                    })
-                                    .join(", ")}
+                                {formatMeetingTimes(section.meetings)}
                             </span>
                         </li>
                     ))}
