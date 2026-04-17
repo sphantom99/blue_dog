@@ -4,19 +4,11 @@ import { useStudentStore } from '../../store/useStudentStore';
 
 const StudentInfoCard = () => {
 
-    const { profile } = useStudentStore();
-
-
-    const graduationPct =
-        profile && profile.totalCreditsRequired > 0
-            ? Math.round((profile.creditsPassed / profile.totalCreditsRequired) * 100)
-            : 0;
+    const { profile, graduationPct } = useStudentStore();
 
     const gpaRef = useCountUp<HTMLParagraphElement>(profile?.gpa ?? 0, { decimalPlaces: 2, duration: 1.5 });
     const creditsRef = useCountUp<HTMLParagraphElement>(profile?.creditsPassed ?? 0, { duration: 1.5 });
     const gradPctRef = useCountUp<HTMLParagraphElement>(graduationPct, { duration: 1.5, suffix: '%' });
-
-
 
     return (
         <Card className="flex flex-wrap items-center justify-between gap-6">
