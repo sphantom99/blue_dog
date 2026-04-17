@@ -20,18 +20,18 @@ export default function LoginPage() {
 	};
 
 	return (
-		<div className="min-h-screen bg-gray-50 flex items-center justify-center">
-			<div className="max-w-md w-full bg-white rounded-xl shadow-lg p-8">
+		<div className="min-h-screen bg-surface-muted flex items-center justify-center">
+			<div className="max-w-md w-full bg-surface rounded-xl shadow-lg p-8">
 				<div className="text-center mb-8">
-					<h1 className="text-3xl font-bold text-gray-900">Maplewood</h1>
-					<p className="mt-2 text-gray-500">Course Planning System</p>
+					<h1 className="text-3xl font-bold text-text-base">Maplewood</h1>
+					<p className="mt-2 text-text-muted">Course Planning System</p>
 				</div>
 
 				<form onSubmit={handleSubmit} className="space-y-6">
 					<div>
 						<label
 							htmlFor="studentId"
-							className="block text-sm font-medium text-gray-700 mb-1"
+							className="block text-sm font-medium text-text-muted mb-1"
 						>
 							Student ID
 						</label>
@@ -42,13 +42,13 @@ export default function LoginPage() {
 							value={studentId}
 							onChange={(e) => setStudentId(e.target.value)}
 							placeholder="Enter your student ID"
-							className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-colors"
+							className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-colors"
 							required
 						/>
 					</div>
 
 					{error && (
-						<p className="text-red-600 text-sm bg-red-50 p-3 rounded-lg">
+						<p className="text-danger-600 text-sm bg-danger-50 p-3 rounded-lg">
 							{error}
 						</p>
 					)}
@@ -56,7 +56,7 @@ export default function LoginPage() {
 					<button
 						type="submit"
 						disabled={loading || !studentId}
-						className="w-full py-2.5 px-4 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
+						className="w-full py-2.5 px-4 bg-primary-600 text-white font-medium rounded-lg hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
 					>
 						{loading && (
 							<svg

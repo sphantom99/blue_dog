@@ -78,20 +78,20 @@ export default function Navbar() {
 	const linkClass = (path: string) =>
 		`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
 			location.pathname === path
-				? "bg-indigo-800 text-white"
-				: "text-indigo-100 hover:bg-indigo-500 hover:text-white"
+				? "bg-primary-800 text-white"
+				: "text-primary-100 hover:bg-primary-500 hover:text-white"
 		}`;
 
 	const drawerLinkClass = (path: string) =>
 		`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
 			location.pathname === path
-				? "bg-indigo-800 text-white"
-				: "text-indigo-100 hover:bg-indigo-500 hover:text-white"
+				? "bg-primary-800 text-white"
+				: "text-primary-100 hover:bg-primary-500 hover:text-white"
 		}`;
 
 	return (
 		<>
-			<nav className="bg-indigo-600 shadow-lg shrink-0 relative z-30">
+			<nav className="bg-primary-600 shadow-lg shrink-0 relative z-30">
 				<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 					<div className="flex items-center justify-between h-16">
 						{/* Logo */}
@@ -108,14 +108,14 @@ export default function Navbar() {
 						{/* Desktop: user info + logout */}
 						{profile && (
 							<div className="hidden md:flex items-center gap-4">
-								<span className="text-indigo-100 text-sm">
+								<span className="text-primary-100 text-sm">
 									{profile.firstName} {profile.lastName} · Grade{" "}
 									{profile.gradeLevel}
 								</span>
 								<button
 									type="button"
 									onClick={handleLogout}
-									className="text-indigo-100 hover:text-white text-sm px-3 py-1.5 rounded-md hover:bg-indigo-500 transition-colors cursor-pointer"
+									className="text-primary-100 hover:text-white text-sm px-3 py-1.5 rounded-md hover:bg-primary-500 transition-colors cursor-pointer"
 								>
 									Logout
 								</button>
@@ -127,7 +127,7 @@ export default function Navbar() {
 							<button
 								type="button"
 								onClick={() => setMenuOpen(true)}
-								className="md:hidden text-indigo-100 hover:text-white p-2 rounded-md hover:bg-indigo-500 transition-colors cursor-pointer"
+								className="md:hidden text-primary-100 hover:text-white p-2 rounded-md hover:bg-primary-500 transition-colors cursor-pointer"
 								aria-label="Open menu"
 							>
 								<svg
@@ -166,18 +166,18 @@ export default function Navbar() {
 
 					{/* Drawer panel — slides in from the right */}
 					<section
-						className={`md:hidden fixed top-0 right-0 h-full w-72 z-50 bg-indigo-700 shadow-2xl flex flex-col transition-transform duration-300 ease-in-out ${
+						className={`md:hidden fixed top-0 right-0 h-full w-72 z-50 bg-primary-700 shadow-2xl flex flex-col transition-transform duration-300 ease-in-out ${
 							menuOpen ? "translate-x-0" : "translate-x-full"
 						}`}
 						aria-label="Navigation drawer"
 					>
 						{/* Drawer header */}
-						<div className="flex items-center justify-between px-5 py-4 border-b border-indigo-500">
+						<div className="flex items-center justify-between px-5 py-4 border-b border-primary-500">
 							<span className="text-white font-bold text-base">Maplewood</span>
 							<button
 								type="button"
 								onClick={() => setMenuOpen(false)}
-								className="text-indigo-200 hover:text-white p-1.5 rounded-md hover:bg-indigo-500 transition-colors cursor-pointer"
+								className="text-primary-200 hover:text-white p-1.5 rounded-md hover:bg-primary-500 transition-colors cursor-pointer"
 								aria-label="Close menu"
 							>
 								<svg
@@ -198,11 +198,11 @@ export default function Navbar() {
 						</div>
 
 						{/* User info */}
-						<div className="px-5 py-4 border-b border-indigo-500">
+						<div className="px-5 py-4 border-b border-primary-500">
 							<p className="text-white text-sm font-semibold">
 								{profile.firstName} {profile.lastName}
 							</p>
-							<p className="text-indigo-300 text-xs mt-0.5">
+							<p className="text-primary-300 text-xs mt-0.5">
 								Grade {profile.gradeLevel}
 							</p>
 						</div>
@@ -215,14 +215,14 @@ export default function Navbar() {
 								onClick={() => setMenuOpen(false)}
 							/>
 							{/* Logout at bottom */}
-							<div className="px-3 py-4 border-t border-indigo-500">
+							<div className="px-3 py-4 border-t border-primary-500">
 								<button
 									type="button"
 									onClick={() => {
 										setMenuOpen(false);
 										handleLogout();
 									}}
-									className="flex items-center gap-3 w-full px-4 py-3 rounded-lg text-sm font-medium text-indigo-100 hover:bg-indigo-500 hover:text-white transition-colors cursor-pointer"
+									className="flex items-center gap-3 w-full px-4 py-3 rounded-lg text-sm font-medium text-primary-100 hover:bg-primary-500 hover:text-white transition-colors cursor-pointer"
 								>
 									<svg
 										className="w-4 h-4 shrink-0"

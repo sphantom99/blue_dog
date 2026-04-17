@@ -19,6 +19,7 @@
   /* ── Semantic status colors ─────────────────────────────────────────────── */
   --color-success-50:  var(--color-green-50);
   --color-success-100: var(--color-green-100);
+  --color-success-300: var(--color-green-300);
   --color-success-600: var(--color-green-600);
   --color-success-700: var(--color-green-700);
   --color-success-800: var(--color-green-800);
@@ -27,6 +28,7 @@
   --color-danger-50:   var(--color-red-50);
   --color-danger-100:  var(--color-red-100);
   --color-danger-200:  var(--color-red-200);
+  --color-danger-300:  var(--color-red-300);
   --color-danger-400:  var(--color-red-400);
   --color-danger-500:  var(--color-red-500);
   --color-danger-600:  var(--color-red-600);

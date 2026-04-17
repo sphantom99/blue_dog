@@ -60,10 +60,10 @@ const History = () => {
                                         </p>
                                         <p className="text-sm text-text-muted">{ch.courseName}</p>
                                     </td>
-                                    <td className="px-6 py-4 text-sm text-gray-600">
+                                    <td className="px-6 py-4 text-sm text-text-muted">
                                         {ch.semesterName} {ch.semesterYear}
                                     </td>
-                                    <td className="px-6 py-4 text-center text-sm text-gray-600">
+                                    <td className="px-6 py-4 text-center text-sm text-text-muted">
                                         {ch.credits}
                                     </td>
                                     <td className="px-6 py-4 text-center">

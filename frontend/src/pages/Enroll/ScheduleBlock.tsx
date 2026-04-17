@@ -6,10 +6,10 @@ import { useCourseStore } from "../../store/useCourseStore";
 import type { CourseSection } from "../../types";
 
 const DEFAULT_COLOR = {
-	bg: "bg-indigo-100",
-	border: "border-indigo-400",
-	text: "text-indigo-900",
-	pendingBorder: "border-indigo-500",
+	bg: "bg-primary-100",
+	border: "border-primary-400",
+	text: "text-primary-900",
+	pendingBorder: "border-primary-500",
 };
 
 interface ScheduleBlockProps {
@@ -45,7 +45,7 @@ export default function ScheduleBlock({
 
 	let containerClass: string;
 	if (isConflict) {
-		containerClass = "bg-red-100 border-2 border-red-400 text-red-900 w-[50%]";
+		containerClass = "bg-danger-100 border-2 border-danger-400 text-danger-900 w-[50%]";
 	} else if (isPending) {
 		containerClass = `${colors.bg} border-2 border-dashed ${colors.pendingBorder} ${colors.text}`;
 	} else {
@@ -68,8 +68,8 @@ export default function ScheduleBlock({
 				disabled={!isPending && dropping}
 				className={`absolute w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold transition-opacity ${
 					isPending
-						? "top-1 left-1 bg-white text-blue-700 border border-blue-400 hover:bg-red-100 hover:text-red-700 hover:border-red-400 shadow-sm text-center align-center"
-						: "top-1 right-1 bg-white/80 hover:bg-red-200 text-gray-600 hover:text-red-700 opacity-0 group-hover:opacity-100"
+						? "top-1 left-1 bg-surface text-pending-700 border border-pending-400 hover:bg-danger-100 hover:text-danger-700 hover:border-danger-400 shadow-sm text-center align-center"
+						: "top-1 right-1 bg-surface/80 hover:bg-danger-200 text-text-muted hover:text-danger-700 opacity-0 group-hover:opacity-100"
 				}`}
 				aria-label={`${isPending ? "Remove" : "Drop"} ${section.courseCode}`}
 			>

@@ -86,7 +86,7 @@ export default function SectionCard({
 	const cardBorder = isConflicting
 		? "border-danger-300 bg-danger-50"
 		: isFull || courseAlreadyEnrolled
-			? "border-gray-100 opacity-70"
+			? "border-border-muted opacity-70"
 			: wouldConflict
 				? "border-warning-100 bg-warning-50"
 				: "border-border";

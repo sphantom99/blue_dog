@@ -51,17 +51,17 @@ export default function CalendarGrid({
 	for (const section of pendingSections) addToSlotMap(section, true);
 
 	return (
-		<div className="bg-white rounded-xl shadow overflow-hidden">
+		<div className="bg-surface rounded-xl shadow overflow-hidden">
 			{/* Grid header */}
 			<div
-				className="grid border-b border-gray-200"
+				className="grid border-b border-border"
 				style={{ gridTemplateColumns: "64px repeat(5, 1fr)" }}
 			>
 				<div className="p-2" />
 				{DAYS.map((day) => (
 					<div
 						key={day}
-						className="p-2 text-center text-sm font-semibold text-gray-700 border-l border-gray-200"
+						className="p-2 text-center text-sm font-semibold text-text-muted border-l border-border"
 					>
 						{day}
 					</div>
@@ -74,17 +74,17 @@ export default function CalendarGrid({
 					{/* Lunch break row — inserted before 1 PM */}
 					{hour === 13 && (
 						<div
-							className="grid border-b border-gray-200"
+							className="grid border-b border-border"
 							style={{ gridTemplateColumns: "64px repeat(5, 1fr)" }}
 						>
-							<div className="p-2 text-xs text-gray-400 text-right pr-3 flex items-center justify-end">
+							<div className="p-2 text-xs text-text-subtle text-right pr-3 flex items-center justify-end">
 								12:00 PM
 							</div>
 							<div
-								className="col-span-5 flex items-center justify-center bg-amber-50 border-l border-gray-100"
+								className="col-span-5 flex items-center justify-center bg-warning-50 border-l border-border-muted"
 								style={{ minHeight: "48px" }}
 							>
-								<span className="text-xs font-medium text-amber-600 tracking-wide uppercase">
+								<span className="text-xs font-medium text-warning-600 tracking-wide uppercase">
 									🍽 Lunch Break
 								</span>
 							</div>
@@ -93,13 +93,13 @@ export default function CalendarGrid({
 
 					{/* Regular teaching period row */}
 					<div
-						className={`grid ${rowIdx < HOURS.length - 1 ? "border-b border-gray-100" : ""}`}
+						className={`grid ${rowIdx < HOURS.length - 1 ? "border-b border-border-muted" : ""}`}
 						style={{
 							gridTemplateColumns: "64px repeat(5, 1fr)",
 							minHeight: "72px",
 						}}
 					>
-						<div className="p-2 text-xs text-gray-400 text-right pr-3 flex items-start justify-end pt-2">
+						<div className="p-2 text-xs text-text-subtle text-right pr-3 flex items-start justify-end pt-2">
 							{formatHour(hour)}
 						</div>
 						{DAYS.map((_, dayIdx) => {
@@ -110,7 +110,7 @@ export default function CalendarGrid({
 							return (
 								<div
 									key={key}
-									className="border-l border-gray-100 p-0.5 h-18 overflow-hidden flex"
+									className="border-l border-border-muted p-0.5 h-18 overflow-hidden flex"
 								>
 									{entries.map((entry) => (
 										<ScheduleBlock

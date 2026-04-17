@@ -173,7 +173,7 @@ export default function EnrollPage() {
 						onClick={() => setMobileTab(tab)}
 						className={`flex-1 py-2.5 text-sm font-medium transition-colors cursor-pointer capitalize ${mobileTab === tab
 							? "border-b-2 border-primary-600 text-primary-600"
-							: "text-text-muted hover:text-gray-700"
+							: "text-text-muted hover:text-text-base"
 							}`}
 					>
 						{tab}

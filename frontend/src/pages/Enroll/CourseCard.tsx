@@ -44,8 +44,8 @@ export default function CourseCard({
 		<div
 			className={`border rounded-lg overflow-hidden transition-colors ${
 				hasUnmetPrereq
-					? "border-gray-200 bg-gray-50 opacity-60"
-					: "border-gray-200 bg-white hover:border-primary-300"
+					? "border-border bg-surface-muted opacity-60"
+					: "border-border bg-surface hover:border-primary-300"
 			}`}
 		>
 			{/* Accordion header — always clickable, even when grayed out */}

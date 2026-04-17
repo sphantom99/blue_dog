@@ -5,12 +5,12 @@ interface SkeletonProps {
 }
 
 export function Skeleton({ className = "" }: SkeletonProps) {
-	return <div className={`animate-pulse bg-gray-200 rounded ${className}`} />;
+	return <div className={`animate-pulse bg-surface-subtle rounded ${className}`} />;
 }
 
 export function CardSkeleton() {
 	return (
-		<div className="bg-white rounded-xl shadow p-6 space-y-4">
+		<div className="bg-surface rounded-xl shadow p-6 space-y-4">
 			<Skeleton className="h-6 w-48" />
 			<Skeleton className="h-4 w-32" />
 			<div className="flex gap-6">
@@ -36,8 +36,8 @@ function SkeletonRow() {
 export function TableSkeleton({ rows = 4 }: { rows?: number }) {
 	const id = useId();
 	return (
-		<div className="bg-white rounded-xl shadow overflow-hidden">
-			<div className="p-6 border-b border-gray-200">
+		<div className="bg-surface rounded-xl shadow overflow-hidden">
+			<div className="p-6 border-b border-border">
 				<Skeleton className="h-6 w-40" />
 			</div>
 			<div className="divide-y divide-gray-200">
@@ -51,7 +51,7 @@ export function TableSkeleton({ rows = 4 }: { rows?: number }) {
 
 function CourseCardSkeleton() {
 	return (
-		<div className="border border-gray-200 rounded-lg p-4 space-y-2">
+		<div className="border border-border rounded-lg p-4 space-y-2">
 			<div className="flex items-center gap-2">
 				<Skeleton className="h-4 w-16" />
 				<Skeleton className="h-4 w-10" />
@@ -74,14 +74,14 @@ export function CourseListSkeleton({ count = 5 }: { count?: number }) {
 
 export function CalendarSkeleton() {
 	return (
-		<div className="bg-white rounded-xl shadow overflow-hidden">
+		<div className="bg-surface rounded-xl shadow overflow-hidden">
 			<div
-				className="grid border-b border-gray-200"
+				className="grid border-b border-border"
 				style={{ gridTemplateColumns: "64px repeat(5, 1fr)" }}
 			>
 				<div className="p-2" />
 				{["Mon", "Tue", "Wed", "Thu", "Fri"].map((d) => (
-					<div key={d} className="p-2 text-center border-l border-gray-200">
+					<div key={d} className="p-2 text-center border-l border-border">
 						<Skeleton className="h-4 w-8 mx-auto" />
 					</div>
 				))}
@@ -89,7 +89,7 @@ export function CalendarSkeleton() {
 			{[8, 9, 10, 11, 13, 14].map((hour) => (
 				<div
 					key={hour}
-					className="grid border-b border-gray-100"
+					className="grid border-b border-border-muted"
 					style={{
 						gridTemplateColumns: "64px repeat(5, 1fr)",
 						minHeight: "72px",
@@ -101,7 +101,7 @@ export function CalendarSkeleton() {
 					{["Mon", "Tue", "Wed", "Thu", "Fri"].map((day) => (
 						<div
 							key={`${hour}-${day}`}
-							className="border-l border-gray-100 p-1"
+							className="border-l border-border-muted p-1"
 						/>
 					))}
 				</div>

@@ -19,7 +19,7 @@ const CurrentSubjects = () => {
                     {schedule?.enrolledSections.map((section) => (
                         <li
                             key={section.id}
-                            className={`rounded-lg px-2 py-1 ${SUBJECT_COLORS[section.specialization]?.bg || "bg-gray-100"} ${SUBJECT_COLORS[section.specialization]?.text || "text-text-base"}`}
+                            className={`rounded-lg px-2 py-1 ${SUBJECT_COLORS[section.specialization]?.bg || "bg-surface-subtle"} ${SUBJECT_COLORS[section.specialization]?.text || "text-text-base"}`}
                         >
                             {section.courseCode} - {section.courseName}
                             <span className="text-sm text-text-muted">

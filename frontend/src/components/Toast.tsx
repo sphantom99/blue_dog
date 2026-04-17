@@ -28,8 +28,8 @@ export default function ToastContainer() {
 					key={toast.id}
 					className={`px-4 py-3 rounded-lg shadow-lg border text-sm animate-slide-in-from-right ${
 						toast.type === "success"
-							? "bg-green-50 border-green-300 text-green-800"
-							: "bg-red-50 border-red-300 text-red-800"
+							? "bg-success-50 border-success-300 text-success-800"
+							: "bg-danger-50 border-danger-300 text-danger-800"
 					}`}
 				>
 					<p className="font-medium">{toast.title}</p>

@@ -28,7 +28,7 @@ export default function CourseFilters({
 						onClick={() => onTypeFilter(t)}
 						className={`px-3 py-1 rounded-full text-xs font-medium transition-colors cursor-pointer ${typeFilter === t
 								? "bg-primary-600 text-white"
-								: "bg-surface-subtle text-gray-600 hover:bg-gray-200"
+								: "bg-surface-subtle text-text-muted hover:bg-surface-subtle"
 							}`}
 					>
 						{t === "all" ? "All" : t.charAt(0).toUpperCase() + t.slice(1)}
