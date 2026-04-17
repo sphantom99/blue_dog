@@ -1,4 +1,4 @@
-import { useCountUp } from "../lib/useCountUp";
+import { useCountUp } from "../../lib/useCountUp";
 interface ProgressBarProps {
 	label?: string;
 	gradPct?: number;

@@ -2,7 +2,7 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import ToastContainer from "./components/Toast";
 import { lazy } from "react";
 const LoginPage = lazy(() => import("./pages/LoginPage"));
-const EnrollPage = lazy(() => import("./pages/EnrollPage"));
+const EnrollPage = lazy(() => import("./pages/Enroll/EnrollPage"));
 const DashboardPage = lazy(() => import("./pages/Dashboard/DashboardPage"));
 
 

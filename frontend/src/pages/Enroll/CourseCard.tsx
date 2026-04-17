@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { useCourseStore } from "../store/useCourseStore";
-import type { Course } from "../types";
-import SectionCard from "./SectionCard";
-import { Badge } from "./ui";
+import { useCourseStore } from "../../store/useCourseStore";
+import { Badge } from "../../components/ui";
+import SectionCard from "../../components/SectionCard";
+import type { Course } from "../../types";
 
 interface CourseCardProps {
 	course: Course;

@@ -1,8 +1,9 @@
-import { SUBJECT_COLORS } from "../lib/specializationColors";
-import { useCourseStore } from "../store/useCourseStore";
-import type { CourseSection } from "../types";
 
 // Color palette keyed by specialization name
+
+import { SUBJECT_COLORS } from "../../lib/specializationColors";
+import { useCourseStore } from "../../store/useCourseStore";
+import type { CourseSection } from "../../types";
 
 const DEFAULT_COLOR = {
 	bg: "bg-indigo-100",

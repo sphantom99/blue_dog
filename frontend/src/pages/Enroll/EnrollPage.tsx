@@ -1,13 +1,13 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import CalendarGrid from "../components/CalendarGrid";
-import CourseCard from "../components/CourseCard";
-import CourseFilters from "../components/CourseFilters";
-import Navbar from "../components/Navbar";
-import { CalendarSkeleton, CourseListSkeleton } from "../components/Skeleton";
-import { Button } from "../components/ui";
-import { useCourseStore } from "../store/useCourseStore";
-import { useStudentStore } from "../store/useStudentStore";
+import CourseFilters from "./CourseFilters";
+import Navbar from "../../components/Navbar";
+import { CalendarSkeleton, CourseListSkeleton } from "../../components/Skeleton";
+import { Button } from "../../components/ui";
+import { useCourseStore } from "../../store/useCourseStore";
+import { useStudentStore } from "../../store/useStudentStore";
+import CourseCard from "./CourseCard";
+import CalendarGrid from "./CalendarGrid";
 
 export default function EnrollPage() {
 	const { profile, studentId } = useStudentStore();
@@ -172,8 +172,8 @@ export default function EnrollPage() {
 						type="button"
 						onClick={() => setMobileTab(tab)}
 						className={`flex-1 py-2.5 text-sm font-medium transition-colors cursor-pointer capitalize ${mobileTab === tab
-								? "border-b-2 border-primary-600 text-primary-600"
-								: "text-text-muted hover:text-gray-700"
+							? "border-b-2 border-primary-600 text-primary-600"
+							: "text-text-muted hover:text-gray-700"
 							}`}
 					>
 						{tab}

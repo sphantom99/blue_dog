@@ -1,4 +1,4 @@
-import ProgressBar from '../../components/ProgressBar';
+import ProgressBar from './ProgressBar';
 import { Card } from '../../components/ui';
 import { useStudentStore } from '../../store/useStudentStore';
 

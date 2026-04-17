@@ -1,6 +1,6 @@
 import { Fragment } from "react";
-import { useCourseStore } from "../store/useCourseStore";
-import type { CourseSection } from "../types";
+import type { CourseSection } from "../../types";
+import { useCourseStore } from "../../store/useCourseStore";
 import ScheduleBlock from "./ScheduleBlock";
 
 const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri"];
