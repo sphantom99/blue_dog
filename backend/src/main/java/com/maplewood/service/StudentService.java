@@ -33,7 +33,7 @@ public class StudentService {
         for (StudentCourseHistory h : history) {
             BigDecimal credits = h.getCourse().getCredits();
             creditsAttempted = creditsAttempted.add(credits);
-            if ("passed".equals(h.getStatus())) {
+            if (CourseHistoryStatus.PASSED.getValue().equals(h.getStatus())) {
                 creditsPassed = creditsPassed.add(credits);
             }
         }

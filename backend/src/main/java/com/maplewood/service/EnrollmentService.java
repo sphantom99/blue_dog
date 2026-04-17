@@ -22,6 +22,7 @@ public class EnrollmentService {
     private final StudentRepository studentRepository;
     private final SemesterRepository semesterRepository;
     private final StudentCourseHistoryRepository historyRepository;
+    private final CourseSectionDTOMapper sectionMapper;
 
     @Transactional
     public EnrollmentResponseDTO enrollStudent(Long studentId, Long sectionId) {
@@ -36,7 +37,7 @@ public class EnrollmentService {
             return EnrollmentResponseDTO.fail(errors);
         }
         Student student = studentOpt.get();
-        if (!"active".equals(student.getStatus())) {
+        if (!StudentStatus.ACTIVE.getValue().equals(student.getStatus())) {
             errors.add(new ValidationErrorDTO(
                     EnrollmentErrorCode.STUDENT_NOT_FOUND.name(),
                     "Student is not active: " + studentId));
@@ -64,7 +65,6 @@ public class EnrollmentService {
         Course course = section.getCourse();
 
         // 3. Course grade level: student must be at or above the minimum grade.
-        //    No upper-bound check — older students may retake lower-grade courses.
         if (student.getGradeLevel() < course.getGradeLevelMin()) {
             errors.add(new ValidationErrorDTO(
                     EnrollmentErrorCode.GRADE_MISMATCH.name(),
@@ -75,7 +75,7 @@ public class EnrollmentService {
 
         // 4. Max 5 courses (only count enrolled, not dropped)
         long enrolledCount = enrollmentRepository.countByStudentIdAndSectionSemesterIdAndStatus(
-                studentId, activeSemester.getId(), "enrolled");
+                studentId, activeSemester.getId(), EnrollmentStatus.ENROLLED.getValue());
         if (enrolledCount >= MAX_COURSES) {
             errors.add(new ValidationErrorDTO(
                     EnrollmentErrorCode.MAX_COURSES_EXCEEDED.name(),
@@ -85,7 +85,7 @@ public class EnrollmentService {
         // 5. Prerequisite passed
         if (course.getPrerequisite() != null) {
             boolean prereqPassed = historyRepository.existsByStudentIdAndCourseIdAndStatus(
-                    studentId, course.getPrerequisite().getId(), "passed");
+                    studentId, course.getPrerequisite().getId(), CourseHistoryStatus.PASSED.getValue());
             if (!prereqPassed) {
                 errors.add(new ValidationErrorDTO(
                         EnrollmentErrorCode.PREREQ_NOT_MET.name(),
@@ -93,25 +93,23 @@ public class EnrollmentService {
             }
         }
 
-        // 8. Not already enrolled in same course (check before time conflict for
-        // clearer messaging)
+        // 8. Not already enrolled in same course
         boolean alreadyEnrolled = enrollmentRepository.existsByStudentIdAndSectionCourseIdAndSectionSemesterIdAndStatus(
-                studentId, course.getId(), activeSemester.getId(), "enrolled");
+                studentId, course.getId(), activeSemester.getId(), EnrollmentStatus.ENROLLED.getValue());
         if (alreadyEnrolled) {
             errors.add(new ValidationErrorDTO(
                     EnrollmentErrorCode.ALREADY_ENROLLED.name(),
                     "Already enrolled in " + course.getCode()));
         }
 
-        // 6. Time conflict — compare this section's timeslots vs existing enrolled
-        // sections
+        // 6. Time conflict
         Set<Long> newTimeslotIds = section.getMeetings().stream()
                 .map(m -> m.getTimeslot().getId())
                 .collect(Collectors.toSet());
 
         List<Enrollment> currentEnrollments = enrollmentRepository.findByStudentIdAndSemesterIdWithDetails(
                 studentId, activeSemester.getId()).stream()
-                .filter(e -> "enrolled".equals(e.getStatus()))
+                .filter(e -> EnrollmentStatus.ENROLLED.getValue().equals(e.getStatus()))
                 .collect(Collectors.toList());
 
         for (Enrollment existing : currentEnrollments) {
@@ -126,29 +124,27 @@ public class EnrollmentService {
             }
         }
 
-        // 7. Capacity — enrolled count vs min classroom capacity across section
-        // meetings
+        // 7. Capacity
         int minCapacity = section.getMeetings().stream()
                 .mapToInt(m -> m.getClassroom().getCapacity())
                 .min()
                 .orElse(0);
-        long sectionEnrolled = enrollmentRepository.countBySectionIdAndStatus(sectionId, "enrolled");
+        long sectionEnrolled = enrollmentRepository.countBySectionIdAndStatus(
+                sectionId, EnrollmentStatus.ENROLLED.getValue());
         if (sectionEnrolled >= minCapacity) {
             errors.add(new ValidationErrorDTO(
                     EnrollmentErrorCode.SECTION_FULL.name(),
                     "Section is full (" + sectionEnrolled + "/" + minCapacity + ")"));
         }
 
-        // Return all errors if any
         if (!errors.isEmpty()) {
             return EnrollmentResponseDTO.fail(errors);
         }
 
-        // Create enrollment
         Enrollment enrollment = new Enrollment();
         enrollment.setStudent(student);
         enrollment.setSection(section);
-        enrollment.setStatus("enrolled");
+        enrollment.setStatus(EnrollmentStatus.ENROLLED.getValue());
         enrollment.setCreatedAt(LocalDateTime.now());
         enrollmentRepository.save(enrollment);
 
@@ -165,13 +161,13 @@ public class EnrollmentService {
         }
 
         Enrollment enrollment = enrollmentOpt.get();
-        if ("dropped".equals(enrollment.getStatus())) {
+        if (EnrollmentStatus.DROPPED.getValue().equals(enrollment.getStatus())) {
             return EnrollmentResponseDTO.fail(List.of(
                     new ValidationErrorDTO(EnrollmentErrorCode.ALREADY_ENROLLED.name(),
                             "Enrollment is already dropped")));
         }
 
-        enrollment.setStatus("dropped");
+        enrollment.setStatus(EnrollmentStatus.DROPPED.getValue());
         enrollmentRepository.save(enrollment);
 
         return EnrollmentResponseDTO.ok();
@@ -185,51 +181,14 @@ public class EnrollmentService {
                 studentId, semesterId);
 
         List<CourseSectionDTO> sections = enrollments.stream()
-                .filter(e -> "enrolled".equals(e.getStatus()))
+                .filter(e -> EnrollmentStatus.ENROLLED.getValue().equals(e.getStatus()))
                 .map(e -> {
-                    CourseSectionDTO dto = mapToCourseSectionDTO(e.getSection());
+                    CourseSectionDTO dto = sectionMapper.toDTO(e.getSection());
                     dto.setEnrollmentId(e.getId());
                     return dto;
                 })
                 .collect(Collectors.toList());
 
         return new ScheduleDTO(semesterId, semester.getName(), sections);
-    }
-
-    public CourseSectionDTO mapToCourseSectionDTO(CourseSection section) {
-        long enrolledCount = enrollmentRepository.countBySectionIdAndStatus(section.getId(), "enrolled");
-
-        int capacity = section.getMeetings().stream()
-                .mapToInt(m -> m.getClassroom().getCapacity())
-                .min()
-                .orElse(0);
-
-        List<SectionMeetingDTO> meetingDTOs = section.getMeetings().stream()
-                .map(m -> new SectionMeetingDTO(
-                        m.getId(),
-                        m.getClassroom().getName(),
-                        m.getClassroom().getCapacity(),
-                        new TimeSlotDTO(
-                                m.getTimeslot().getId(),
-                                m.getTimeslot().getDayOfWeek(),
-                                m.getTimeslot().getStartTime(),
-                                m.getTimeslot().getEndTime())))
-                .collect(Collectors.toList());
-
-        return new CourseSectionDTO(
-                section.getId(),
-                null,
-                section.getCourse().getId(),
-                section.getCourse().getCode(),
-                section.getCourse().getName(),
-                section.getCourse().getSpecialization() != null
-                        ? section.getCourse().getSpecialization().getName()
-                        : null,
-                section.getTeacher().getFirstName(),
-                section.getTeacher().getLastName(),
-                section.getSectionLabel(),
-                capacity,
-                enrolledCount,
-                meetingDTOs);
     }
 }

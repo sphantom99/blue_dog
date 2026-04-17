@@ -16,7 +16,7 @@ public class CourseService {
     private final CourseRepository courseRepository;
     private final CourseSectionRepository courseSectionRepository;
     private final SemesterRepository semesterRepository;
-    private final EnrollmentService enrollmentService;
+    private final CourseSectionDTOMapper sectionMapper;
 
     public List<CourseDTO> getAvailableCourses(Integer gradeLevel, Integer semesterOrder) {
         List<Course> courses;
@@ -38,14 +38,14 @@ public class CourseService {
                 courseId, activeSemester.getId());
 
         return sections.stream()
-                .map(enrollmentService::mapToCourseSectionDTO)
+                .map(sectionMapper::toDTO)
                 .collect(Collectors.toList());
     }
 
     public List<CourseSectionDTO> getSectionsBySemester(Long semesterId) {
         List<CourseSection> sections = courseSectionRepository.findBySemesterIdWithDetails(semesterId);
         return sections.stream()
-                .map(enrollmentService::mapToCourseSectionDTO)
+                .map(sectionMapper::toDTO)
                 .collect(Collectors.toList());
     }
 
